@@ -1,6 +1,3 @@
-from locale import normalize
-from re import S
-from epitran.backoff import Backoff
 from collections import Counter
 import difflib as dl
 from joblib import Parallel, delayed
