@@ -45,6 +45,18 @@ def rank(query):
     
     return {w[0]: w[1] for w in r}
 
+def remove_cap_dupl(l):
+    o = []
+    for e in l:
+        found = False
+        for i, oe in enumerate(o):
+            if oe[0] == e[0].lower():
+                found = True
+                o[i] = (o[i][0], o[i][1], o[i][2] + e[2])
+        if not found:
+            o.append((e[0].lower(), e[1], e[2]))
+    return o
+
 def simulate(sentence, prompt):
     pred = "" + prompt
     ps = make_phonetic(sentence) + " "
@@ -81,9 +93,8 @@ def simulate(sentence, prompt):
 
         for c in sr:
             if c[0] in fr.keys() and c[0] != "":
-                fr[c[0]] = [(e[0], e[1], e[2]*pow(c[1], 10.0) ) for e in fr[c[0]]]
+                fr[c[0]] = remove_cap_dupl([(e[0], e[1], e[2]*pow(c[1], 10.0) ) for e in fr[c[0]]])
                 
-
         lr = [item for sublist in fr.values() for item in sublist]
         #print("lr: " + str(lr[:3]))
         s = sorted(lr, key=lambda x: x[2], reverse=True)
