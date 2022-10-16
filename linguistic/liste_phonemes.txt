@@ -1,0 +1,60 @@
+symbole     son     exemples
+
+a           a       salut  chat  arbre
+                     ^       ^   ^
+k           k       coup   appliquer  kart
+                    ^           ^^    ^
+p           p       pourquoi  apporter  prisme
+                    ^          ^^       ^
+E           é/è     éphémère  lait  dés
+                    ^  ^ ^     ^^    ^
+l           l       lampe  aller  lettre
+                    ^       ^^    ^
+§           on      action  rond  simulation
+                        ^^   ^^           ^^
+t           t       train  attention  tour
+                    ^       ^^        ^
+R           r       riche  règle  titre
+                    ^      ^         ^
+j           y       juillet  payer  ail
+                       ^^      ^     ^^                  
+o           o       jaune  rizoto  porte
+                     ^^       ^ ^   ^
+f           f       effacer  phoneme  facile
+                     ^^      ^^       ^
+s           s       sortir  effacer  souple
+                    ^           ^    ^
+i           i       irreverssible  italie  il
+                    ^        ^     ^   ^   ^
+d           d       dormir  double  adorer
+                    ^       ^        ^
+Z           j       ajuster  jardin  genoux
+                     ^       ^       ^
+n           n       nuit  animation  non
+                    ^      ^         ^
+5           in      nain  un  pin
+                     ^^^  ^^   ^^
+b           b       bateau  boir  abolir
+                    ^       ^      ^
+u           ou      vous  nounou  caillou
+                     ^^    ^^ ^^       ^^
+v           v       valider  avouer  wagon
+                    ^         ^      ^
+@           an      antiloppe  aliment  extrêmement
+                    ^^             ^^           ^^^
+g           g       galloper  aiguisé  aggripper
+                    ^           ^^      ^^
+2           eu      noeud  deux  mieux
+                     ^^^    ^^     ^^
+m           m       mois  montre alignement
+                    ^     ^            ^
+z           z       zoulou  bizarre  bazard
+                    ^         ^        ^
+w           w       oui  quoi  halloween
+                    ^^^   ^^^       ^
+y           u       utile  connu  attributs
+                    ^          ^        ^
+S           ch      cheval  chanter  schema
+                    ^^      ^^       ^^^
+N           gn      montagne  ignorer  champagne
+                         ^^    ^^            ^^

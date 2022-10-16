@@ -10,13 +10,12 @@ with open("fr-dict.txt") as file:
 with open("fr-simplified.txt") as file:
     phonemes = [line.strip() for line in file]
 
-"""
 #count the number of each phoneme in the dictionary
 count = Counter("".join(phonemes) )
 for (i, (p, c)) in enumerate(count.items()):
     print(str(i) + " - " + p + " : " + str(c))
-"""
 
+"""
 #
 uniques = list(dict.fromkeys(phonemes))
 
@@ -36,3 +35,4 @@ def rank(query):
 ranked = rank("fam")
 srank = rsort(ranked)
 print(srank[:20])
+"""

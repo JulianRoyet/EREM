@@ -1,0 +1,6 @@
+#!/bin/sh
+set -ue
+base=$(cd "$(dirname "$0")" && pwd)
+# this `python -c` hack exists because isolated mode won't pick up our PYTHONHOME env var
+# it prevents pip importing python files from the current directory inadvertently and breaking
+exec "$base/python" -c 'import sys; sys.path.remove(""); import runpy; runpy._run_module_as_main("pip")' "$@"

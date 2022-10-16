@@ -25,6 +25,8 @@ with open("fr-dict.txt", encoding="utf-8") as file:
 with open("fr-simplified.txt", encoding="utf-8") as file:
     phonemes = [line.strip() for line in file]
 
+
+TYPING_WEIGHT = 0.0
 nb_words = len(words)
 pdict = {words[i]: phonemes[i] for i in range(nb_words)}
 rdict = {phonemes[i]: words[i] for i in range(nb_words)}
@@ -93,7 +95,7 @@ def simulate(sentence, prompt):
 
         for c in sr:
             if c[0] in fr.keys() and c[0] != "":
-                fr[c[0]] = remove_cap_dupl([(e[0], e[1], e[2]*pow(c[1], 10.0) ) for e in fr[c[0]]])
+                fr[c[0]] = remove_cap_dupl([(e[0], e[1], e[2]*pow(c[1], TYPING_WEIGHT) ) for e in fr[c[0]]])
                 
         lr = [item for sublist in fr.values() for item in sublist]
         #print("lr: " + str(lr[:3]))
@@ -101,4 +103,4 @@ def simulate(sentence, prompt):
         print("best candidates: " + str(s[:3]))
 
 
-simulate("Bonjour une baguette et deux croissants s il vous plaît", "Paul: Bonjour\n Inconnu: Bonjour\n Paul: ")
+simulate("Bonjour une baguette et deux croissants s il vous plaît", "")

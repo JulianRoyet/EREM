@@ -1,0 +1,72 @@
+End User License Agreement (EULA)
+        
+By accessing, installing, or using any or all of the contained Software, you accept all terms and conditions of this agreement. If you do not agree, do not use this Software.
+
+1. Definitions
+Capitalized terms used herein, singular or plural, shall hold the following respective meanings when used in this Agreement:
+
+"Licensor" means Talon Voice, LLC (contact: support@talonvoice.com). "Licensee" means You, as a human person, and not a corporate or other entity.
+
+"Talon GitHub" refers to https://github.com/talonvoice
+"Talon Slack" refers to https://talonvoice.slack.com
+"Talon Website" refers to https://talonvoice.com
+
+"Talon" refers to the Talon app folder, accompanying archive, installer, disk, or disk image, and all contents which are not separately licensed to you. This includes all application binary files, user interfaces, icons, imagery, Python scripts, documentation, and other contained files, unless the files are accompanied by their own license (such as Python site-packages), or unless they are described with another license by the LICENSES.txt linked via "Acknowledgements" in the Talon About window. This agreement is additionally extended to any updates downloaded from inside the Talon application, excluding any official update by the Licensor which prompts you to accept a new or changed agreement (updates will be cryptographically signed by the Licensor where possible).
+
+2. License
+Subject to your compliance with the terms and conditions of this Agreement, the Licensor grants you a royalty-free, non-exclusive, non-transferable license to install and use the Software. All rights not expressly granted by this Agreement are reserved. Any provision in this Agreement determined by legally binding proceedings to be unenforceable will be enforced to the maximum remaining extent possible and not diminish any other provision.
+
+3. Restrictions
+The source code, application binary files, network protocols, design, and implementation of the software are trade secrets. You may disassemble, decompile, or reverse engineer it for personal knowledge only, extended only in ways expressly permitted by applicable laws. Talon binaries, updates, files, code, and any works produced from reverse-engineered Talon code (which are unlicensed derivative works) are not permitted to be redistributed in public or private.
+
+You must comply with all applicable export laws. You will not use Talon for any illegal purposes. Talon is licensed, not sold.
+
+Talon's eye tracking features are for personal computer interaction use only. You are not allowed to store eye gaze data recorded with Talon, including but not limited to raw coordinates, videos, or heatmaps, for any kind of research or commercial purposes. You are allowed to record and share screen captures of Talon in use, including with a gaze overlay active, as long as the purpose is demonstrative and not for commercial use or eye tracking/gaze research. This restriction exists as a courtesy because Tobii prohibits such commercial and research use with their own free SDK.
+
+4. Shared Use
+You may freely demonstrate the capabilities of Talon to other people and distribute tutorials and videos for any public release of Talon.
+
+If you allow another user to borrow your (one) primary computer, they are allowed to use any installed Talon software, including paid extensions or subscriptions to Talon, under the terms of this Agreement.
+
+Each Talon paid extension or subscription account may either be installed and used on multiple computers by one user, or installed and used on one computer by multiple users. It is against the terms of this Agreement to use a single owned license or subscription to Talon content on multiple computers with multiple users, whether the use is simultaneous or not.
+
+You may not charge another user for use of your Talon license separately from any other use charges (e.g. you may charge for use of a computer, room, or area, but you may not charge extra to enable use of Talon).
+
+5. Included Source Code
+Some parts of Talon are included as viewable and editable Python source. Unless these files are included from another project or made available as a Talon GitHub repository with a separate license (which most are), they are not licensed for redistribution. Feel free to make edits locally and suggest changes (in the Talon Slack or via email: support@talonvoice.com).
+
+6. Security Vulnerabilities
+Please send any security concerns or known vulnerabilities with Talon, the supporting software, or the website to security@talonvoice.com. It is against the terms of this Agreement to exploit any security vulnerability in Talon or bundled code against a non-consenting Talon user, against the Talon organization, or against the Talon website or supporting web services.
+
+7. Privacy
+The Talon website and supporting services at talonvoice.com are hosted on a full-disk-encrypted physical server with restricted access.
+All communication between the Talon app and Talon web services is outlined below, and always happens over fully encrypted (TLS) connections.
+
+If you opt into automatic updates, your IP address and app version may be sent to and logged by the Talon update server periodically while Talon is running.
+
+The community packages system (which will allow you to share and receive user-contributed voice grammars and other plugins) may log, store, and transmit information about which plugins are installed and their frequency of use.
+
+Usage-based metrics, which consist mostly of numerical Talon app/script performance information and percentage ratios, may be uploaded to a Talon-owned server to identify performance and user experience issues and regressions in the app. These metrics will be correlated to a random unique token which is not associated to an IP address or any information other than the metrics themselves. These metrics have been designed to not include identifiable or sensitive information, and metrics do NOT record actual input, speech, text, or screen contents.
+
+If the Talon app crashes, a crash report will be automatically uploaded to a Talon-owned server the next time Talon starts.
+
+8. Community Contributions
+When a Licensee shares with the Talon community "original works" (configurations, voice grammars, documentation, code, and supporting metadata, of which they are the copyright holder), intended for use with Talon, through community features in the Talon app, Talon Slack, or Talon Website: unless these original works are distributed with their own valid software license, the Licensee (you) agrees to license these original works to the Licensor and all Talon users under the terms of the non-restrictive BSD Zero Clause License with the below license text (with year and copyright holder(s) replaced with the release year and the creators' name(s) or alias(es)):
+
+==== Start BSD Zero Clause License ====
+
+Copyright (c) <release year> <copyright holder(s)>
+
+Permission to use, copy, modify, and/or distribute this software for any purpose with or without fee is hereby granted.
+
+THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
+
+===== End BSD Zero Clause License =====
+
+9. Liability
+Under no circumstances shall the Licensor be liable for claims, damages, lost profits, accidents, or costs whatsoever, whether directly or indirectly connected to the creation, distribution, or use of Talon, the supporting software, or the Talon community.
+
+Talon is not a health product. Talon offers alternative computer input methods which can be used at your discretion to improve productivity or minimize the use of your hands. Repetitive strain is not limited to the hands, and you can conceivably cause additional personal damage through use or overuse of your eyes, neck, and vocal cords. We highly recommend you take frequent breaks from usage, stretch often, and vary your use conditions. The Licensor and Talon organization are not liable in any way for personal health conditions caused by, or not healed by, Talon (including use of head tracking, eye tracking, or voice control features), whether by overuse or other conditions.
+
+10. Contact
+If you have any questions about the license terms, or Talon product, or wish to negotiate an alternate license agreement, contact the Licensor at support@talonvoice.com
