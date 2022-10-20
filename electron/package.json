@@ -1,0 +1,22 @@
+{
+  "name": "EREM",
+  "version": "1.0.0",
+  "description": "Expressive Rapid Eye Movement: Fluid visual text input",
+  "main": "main.ts",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "start /B python ..\\backend\\server.py & electron ."
+  },
+  "author": "Keming",
+  "license": "MIT",
+  "devDependencies": {
+    "electron": "^21.1.1"
+  },
+  "dependencies": {
+    "@grpc/grpc-js": "^1.7.2",
+    "@grpc/proto-loader": "^0.7.3",
+    "@types/node": "^18.11.3",
+    "csv-parse": "^5.3.1",
+    "node-gyp": "^9.3.0"
+  }
+}

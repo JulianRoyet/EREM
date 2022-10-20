@@ -1,9 +1,0 @@
-#!/bin/sh
-set -ue
-cd "$(dirname "$0")"
-if [ ! -e .resources ]; then
-    echo "Python environment not set up correctly. Try relaunching Talon."
-    exit 1
-fi
-res=$(cat .resources)
-./python "$res/tail.py" -q "DEBUG Talon Version:" ../../talon.log

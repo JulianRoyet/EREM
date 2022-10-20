@@ -1,9 +1,0 @@
-{
-    "name": "Conformer b108 (2021-09-15)",
-    "language": "en_US",
-    "blobs": [
-        {"sha256": "b215cd26dc086bf08217d5f252de16736e93bb5d8d40f3149f59af26393b192c", "size": 110972445, "name": "acoustic.b2l"},
-        {"sha256": "a040e987ef46bcd348146fed06ad628a8ff8253f80a1d595a48ef06cc3c3a350", "size": 4149624,   "name": "lexicon.txt"},
-        {"sha256": "6fbd47b383d91e366a13d2e5c98e021cb04c1ed763edb3ae58333fee3c906857", "size": 11451264,  "name": "lexicon_flat.bin"}
-    ]
-}
