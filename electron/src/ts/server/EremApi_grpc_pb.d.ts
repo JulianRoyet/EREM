@@ -10,6 +10,7 @@ import * as EremApi_pb from "./EremApi_pb";
 interface IEremApiService extends grpc.ServiceDefinition<grpc.UntypedServiceImplementation> {
     getSuggestions: IEremApiService_IgetSuggestions;
     setSentence: IEremApiService_IsetSentence;
+    isReady: IEremApiService_IisReady;
 }
 
 interface IEremApiService_IgetSuggestions extends grpc.MethodDefinition<EremApi_pb.CandidateUpdate, EremApi_pb.Suggestions> {
@@ -30,12 +31,22 @@ interface IEremApiService_IsetSentence extends grpc.MethodDefinition<EremApi_pb.
     responseSerialize: grpc.serialize<EremApi_pb.Void>;
     responseDeserialize: grpc.deserialize<EremApi_pb.Void>;
 }
+interface IEremApiService_IisReady extends grpc.MethodDefinition<EremApi_pb.Void, EremApi_pb.Ready> {
+    path: "/EremApi/isReady";
+    requestStream: false;
+    responseStream: false;
+    requestSerialize: grpc.serialize<EremApi_pb.Void>;
+    requestDeserialize: grpc.deserialize<EremApi_pb.Void>;
+    responseSerialize: grpc.serialize<EremApi_pb.Ready>;
+    responseDeserialize: grpc.deserialize<EremApi_pb.Ready>;
+}
 
 export const EremApiService: IEremApiService;
 
 export interface IEremApiServer {
     getSuggestions: grpc.handleUnaryCall<EremApi_pb.CandidateUpdate, EremApi_pb.Suggestions>;
     setSentence: grpc.handleUnaryCall<EremApi_pb.Sentence, EremApi_pb.Void>;
+    isReady: grpc.handleUnaryCall<EremApi_pb.Void, EremApi_pb.Ready>;
 }
 
 export interface IEremApiClient {
@@ -45,6 +56,9 @@ export interface IEremApiClient {
     setSentence(request: EremApi_pb.Sentence, callback: (error: grpc.ServiceError | null, response: EremApi_pb.Void) => void): grpc.ClientUnaryCall;
     setSentence(request: EremApi_pb.Sentence, metadata: grpc.Metadata, callback: (error: grpc.ServiceError | null, response: EremApi_pb.Void) => void): grpc.ClientUnaryCall;
     setSentence(request: EremApi_pb.Sentence, metadata: grpc.Metadata, options: Partial<grpc.CallOptions>, callback: (error: grpc.ServiceError | null, response: EremApi_pb.Void) => void): grpc.ClientUnaryCall;
+    isReady(request: EremApi_pb.Void, callback: (error: grpc.ServiceError | null, response: EremApi_pb.Ready) => void): grpc.ClientUnaryCall;
+    isReady(request: EremApi_pb.Void, metadata: grpc.Metadata, callback: (error: grpc.ServiceError | null, response: EremApi_pb.Ready) => void): grpc.ClientUnaryCall;
+    isReady(request: EremApi_pb.Void, metadata: grpc.Metadata, options: Partial<grpc.CallOptions>, callback: (error: grpc.ServiceError | null, response: EremApi_pb.Ready) => void): grpc.ClientUnaryCall;
 }
 
 export class EremApiClient extends grpc.Client implements IEremApiClient {
@@ -55,4 +69,7 @@ export class EremApiClient extends grpc.Client implements IEremApiClient {
     public setSentence(request: EremApi_pb.Sentence, callback: (error: grpc.ServiceError | null, response: EremApi_pb.Void) => void): grpc.ClientUnaryCall;
     public setSentence(request: EremApi_pb.Sentence, metadata: grpc.Metadata, callback: (error: grpc.ServiceError | null, response: EremApi_pb.Void) => void): grpc.ClientUnaryCall;
     public setSentence(request: EremApi_pb.Sentence, metadata: grpc.Metadata, options: Partial<grpc.CallOptions>, callback: (error: grpc.ServiceError | null, response: EremApi_pb.Void) => void): grpc.ClientUnaryCall;
+    public isReady(request: EremApi_pb.Void, callback: (error: grpc.ServiceError | null, response: EremApi_pb.Ready) => void): grpc.ClientUnaryCall;
+    public isReady(request: EremApi_pb.Void, metadata: grpc.Metadata, callback: (error: grpc.ServiceError | null, response: EremApi_pb.Ready) => void): grpc.ClientUnaryCall;
+    public isReady(request: EremApi_pb.Void, metadata: grpc.Metadata, options: Partial<grpc.CallOptions>, callback: (error: grpc.ServiceError | null, response: EremApi_pb.Ready) => void): grpc.ClientUnaryCall;
 }

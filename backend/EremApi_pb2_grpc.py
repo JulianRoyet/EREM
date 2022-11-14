@@ -24,6 +24,11 @@ class EremApiStub(object):
                 request_serializer=EremApi__pb2.Sentence.SerializeToString,
                 response_deserializer=EremApi__pb2.Void.FromString,
                 )
+        self.isReady = channel.unary_unary(
+                '/EremApi/isReady',
+                request_serializer=EremApi__pb2.Void.SerializeToString,
+                response_deserializer=EremApi__pb2.Ready.FromString,
+                )
 
 
 class EremApiServicer(object):
@@ -41,6 +46,12 @@ class EremApiServicer(object):
         context.set_details('Method not implemented!')
         raise NotImplementedError('Method not implemented!')
 
+    def isReady(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
 
 def add_EremApiServicer_to_server(servicer, server):
     rpc_method_handlers = {
@@ -53,6 +64,11 @@ def add_EremApiServicer_to_server(servicer, server):
                     servicer.setSentence,
                     request_deserializer=EremApi__pb2.Sentence.FromString,
                     response_serializer=EremApi__pb2.Void.SerializeToString,
+            ),
+            'isReady': grpc.unary_unary_rpc_method_handler(
+                    servicer.isReady,
+                    request_deserializer=EremApi__pb2.Void.FromString,
+                    response_serializer=EremApi__pb2.Ready.SerializeToString,
             ),
     }
     generic_handler = grpc.method_handlers_generic_handler(
@@ -95,5 +111,22 @@ class EremApi(object):
         return grpc.experimental.unary_unary(request, target, '/EremApi/setSentence',
             EremApi__pb2.Sentence.SerializeToString,
             EremApi__pb2.Void.FromString,
+            options, channel_credentials,
+            insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
+
+    @staticmethod
+    def isReady(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(request, target, '/EremApi/isReady',
+            EremApi__pb2.Void.SerializeToString,
+            EremApi__pb2.Ready.FromString,
             options, channel_credentials,
             insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
