@@ -46,11 +46,14 @@ function reset(){
     setSentence(sentence);
 }
 
+function updateSuggestionsDisplay(){
+    //TODO: mettre à jour les boutons suggestions à partir du tableau: suggestions: string[]
+}
+
 server.onopen = function(){
     setSentence(sentence);
     //TODO: LOADING SCREEN ON
 }
-
 server.onmessage = function(event: any){
     let message = JSON.parse(event.data);
 
@@ -61,6 +64,7 @@ server.onmessage = function(event: any){
             break;
         case "suggestions":
             suggestions = message.content;
+            updateSuggestionsDisplay();
             break;
 
 
