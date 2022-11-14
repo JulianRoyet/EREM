@@ -14,28 +14,28 @@ class EremApiStub(object):
         Args:
             channel: A grpc.Channel.
         """
-        self.getHelloMsg = channel.unary_unary(
-                '/EremApi/getHelloMsg',
-                request_serializer=EremApi__pb2.Void.SerializeToString,
-                response_deserializer=EremApi__pb2.HelloText.FromString,
+        self.getSuggestions = channel.unary_unary(
+                '/EremApi/getSuggestions',
+                request_serializer=EremApi__pb2.CandidateUpdate.SerializeToString,
+                response_deserializer=EremApi__pb2.Suggestions.FromString,
                 )
-        self.getArray = channel.unary_unary(
-                '/EremApi/getArray',
-                request_serializer=EremApi__pb2.Void.SerializeToString,
-                response_deserializer=EremApi__pb2.StringArray.FromString,
+        self.setSentence = channel.unary_unary(
+                '/EremApi/setSentence',
+                request_serializer=EremApi__pb2.Sentence.SerializeToString,
+                response_deserializer=EremApi__pb2.Void.FromString,
                 )
 
 
 class EremApiServicer(object):
     """Missing associated documentation comment in .proto file."""
 
-    def getHelloMsg(self, request, context):
+    def getSuggestions(self, request, context):
         """Missing associated documentation comment in .proto file."""
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
         context.set_details('Method not implemented!')
         raise NotImplementedError('Method not implemented!')
 
-    def getArray(self, request, context):
+    def setSentence(self, request, context):
         """Missing associated documentation comment in .proto file."""
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
         context.set_details('Method not implemented!')
@@ -44,15 +44,15 @@ class EremApiServicer(object):
 
 def add_EremApiServicer_to_server(servicer, server):
     rpc_method_handlers = {
-            'getHelloMsg': grpc.unary_unary_rpc_method_handler(
-                    servicer.getHelloMsg,
-                    request_deserializer=EremApi__pb2.Void.FromString,
-                    response_serializer=EremApi__pb2.HelloText.SerializeToString,
+            'getSuggestions': grpc.unary_unary_rpc_method_handler(
+                    servicer.getSuggestions,
+                    request_deserializer=EremApi__pb2.CandidateUpdate.FromString,
+                    response_serializer=EremApi__pb2.Suggestions.SerializeToString,
             ),
-            'getArray': grpc.unary_unary_rpc_method_handler(
-                    servicer.getArray,
-                    request_deserializer=EremApi__pb2.Void.FromString,
-                    response_serializer=EremApi__pb2.StringArray.SerializeToString,
+            'setSentence': grpc.unary_unary_rpc_method_handler(
+                    servicer.setSentence,
+                    request_deserializer=EremApi__pb2.Sentence.FromString,
+                    response_serializer=EremApi__pb2.Void.SerializeToString,
             ),
     }
     generic_handler = grpc.method_handlers_generic_handler(
@@ -65,7 +65,7 @@ class EremApi(object):
     """Missing associated documentation comment in .proto file."""
 
     @staticmethod
-    def getHelloMsg(request,
+    def getSuggestions(request,
             target,
             options=(),
             channel_credentials=None,
@@ -75,14 +75,14 @@ class EremApi(object):
             wait_for_ready=None,
             timeout=None,
             metadata=None):
-        return grpc.experimental.unary_unary(request, target, '/EremApi/getHelloMsg',
-            EremApi__pb2.Void.SerializeToString,
-            EremApi__pb2.HelloText.FromString,
+        return grpc.experimental.unary_unary(request, target, '/EremApi/getSuggestions',
+            EremApi__pb2.CandidateUpdate.SerializeToString,
+            EremApi__pb2.Suggestions.FromString,
             options, channel_credentials,
             insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
 
     @staticmethod
-    def getArray(request,
+    def setSentence(request,
             target,
             options=(),
             channel_credentials=None,
@@ -92,8 +92,8 @@ class EremApi(object):
             wait_for_ready=None,
             timeout=None,
             metadata=None):
-        return grpc.experimental.unary_unary(request, target, '/EremApi/getArray',
-            EremApi__pb2.Void.SerializeToString,
-            EremApi__pb2.StringArray.FromString,
+        return grpc.experimental.unary_unary(request, target, '/EremApi/setSentence',
+            EremApi__pb2.Sentence.SerializeToString,
+            EremApi__pb2.Void.FromString,
             options, channel_credentials,
             insecure, call_credentials, compression, wait_for_ready, timeout, metadata)

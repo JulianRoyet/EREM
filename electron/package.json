@@ -2,12 +2,13 @@
   "name": "EREM",
   "version": "1.0.0",
   "description": "Expressive Rapid Eye Movement: Fluid visual text input",
-  "main": "main.ts",
+  "main": "src/js/server/main.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "start /B python ..\\backend\\server.py & electron ."
+    "build": "tsc --rootDir UI/ts --outDir UI/js",
+    "start": "electron ."
   },
-  "author": "Keming",
+  "author": "Keming, Theo, Mirette, Julian, George Harisson",
   "license": "MIT",
   "devDependencies": {
     "electron": "^21.1.1"
@@ -17,6 +18,11 @@
     "@grpc/proto-loader": "^0.7.3",
     "@types/node": "^18.11.3",
     "csv-parse": "^5.3.1",
-    "node-gyp": "^9.3.0"
+    "grpc": "^1.24.11",
+    "grpc_tools_node_protoc_ts": "^5.3.2",
+    "grpc-tools": "^1.11.3",
+    "node-gyp": "^9.3.0",
+    "protoc-gen-ts": "^0.8.5",
+    "ws": "^8.11.0"
   }
 }

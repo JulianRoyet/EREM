@@ -1,0 +1,127 @@
+*{
+    margin: 0px;
+}
+
+.template{
+    display: none;
+}
+
+.textarea {
+    display: flex;
+    text-align: left;
+    font-size: xx-large;
+    height: 12vh;
+    background-color:#222;
+    margin: 1vh;
+    border-radius: 15px;
+}
+
+.text {
+    border-radius: 15px;
+    text-align: left;
+    font-size: xx-large;
+    width:100%;
+}
+
+body{
+    height: 100vh;
+    background-color:#222;
+}
+.k-keyboard ul {
+    list-style-type: none;
+    margin: 0px;
+    padding: 0px;
+}
+.k-lines{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: stretch;
+
+    background-color:#222;
+    padding: 1vh;
+}
+.k-keyline{
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    
+}
+.k-key{
+    display:table;
+    width: 8vw;
+    height: 12vh;
+    margin: 3vh;
+    background-color: white;
+    font-size: 5vw;
+    border-radius: 15px;
+    text-align: center;
+}
+
+.k-lines>li:nth-child(even) .k-keyline>li:nth-child(even){background-image: linear-gradient(#F99, #F99);}
+.k-lines>li:nth-child(even) .k-keyline>li:nth-child(odd){background-image: linear-gradient(#FCC, #FCC);}
+.k-lines>li:nth-child(odd) .k-keyline>li:nth-child(even){background-image: linear-gradient(#CCF, #CCF);}
+.k-lines>li:nth-child(odd) .k-keyline>li:nth-child(odd){background-image: linear-gradient(#99F, #99F);}
+
+.k-text{
+    display: table-cell;
+    vertical-align:middle;
+}
+.mots{
+    display: grid;
+    grid-template-columns:repeat(4, auto);
+    grid-gap: 1vh;
+    background-color:#222;
+    margin: 1vh;
+    height: 12vh;
+}
+
+.mot{
+    align-self: center;
+    font-size: xx-large;
+    border: 3px;
+    height: 100%;
+    width: 100%;
+    background-color: #FEB;
+}
+.mots button{
+    border-radius: 15px;
+}
+
+.delete{
+    align-self: center;
+    font-size: xx-large;
+    border: 3px;
+    height: 100%;
+    width: 100%;
+    background-color: #CA3C66;
+}
+
+.k-key {
+    background-color: #8EA;
+    background-repeat: no-repeat;
+    background-position: 50% 50%;
+    background-size: 100% 100%;
+    transition: transform .5s;
+  }
+  
+.k-key:hover{
+    transform: scale(1.05);
+    background-size: 0% 0%;
+    transition: background-size 0.8s ease-in, transform .5s;
+}
+
+.k-keyboard{
+    cursor: none;
+}
+#pointer{
+    position: absolute;
+    width: 40px;
+    height: 40px;
+    border-radius: 100%;
+    border: 2px solid white;
+    outline: 2px solid black;
+    background-color: transparent;
+    pointer-events: none;
+}

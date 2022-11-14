@@ -1,4 +1,4 @@
-var PROTO_PATH = '../backend/EremApi.proto';
+var PROTO_PATH = '../protobuff/EremApi.proto';
 var grpc = require('@grpc/grpc-js');
 var protoLoader = require('@grpc/proto-loader');
 
@@ -14,4 +14,5 @@ var packageDefinition = protoLoader.loadSync(
 
 var protoDescriptor = grpc.loadPackageDefinition(packageDefinition);
 var api = protoDescriptor.EremApi
-exports.EremApi = api
+
+export {api as EremApi}
