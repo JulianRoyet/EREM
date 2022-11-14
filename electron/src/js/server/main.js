@@ -49,14 +49,15 @@ wss.on('connection', function connection(ws) {
     });
 });
 app.whenReady().then(function () {
-    backend = spawn("cmd.exe", ["/C", "start /B python ..\\backend\\server.py"]);
-    backend.on('spawn', function () {
-        createWindow();
-        console.log("ready");
-    });
-    backend.stdout.on('data', function (data) {
-        console.log("BACKEND: ".concat(data));
-    });
+    // backend = spawn("cmd.exe", ["/C", "start /B python ..\\backend\\server.py"]);
+    // backend.on('spawn', () => {
+    //   createWindow()
+    //   console.log("ready")
+    // })
+    // backend.stdout.on('data', (data) =>{
+    //   console.log(`BACKEND: ${data}`)
+    // });
+    createWindow();
 });
 app.on('window-all-closed', function () {
     backend.kill();

@@ -9,25 +9,10 @@
         <div class = "textarea">
             <input id="textarea" class="text" type="text" value="">
         </div>
-        <script>
-            function displayText(msg){
-                let textarea = document.getElementById('textarea');
-                textarea.value+=msg+" ";
-            }
-            function deleteWord(){
-                let textarea = document.getElementById('textarea');
-                let contenu = textarea.value;
-                let tab = contenu.split(" ");
-                textarea.value = "";
-                for(let i = 0; i < tab.length-2; i++){
-                    textarea.value += tab[i]+" ";
-                }
-            }
-        </script>
         <div class="mots">
-            <button class="mot" onclick="displayText('Je')">Je</button>
-            <button class="mot" onclick="displayText('Hello')">Hello</button>
-            <button class="mot" onclick="displayText('World')">World</button>
+            <button class="mot">Je</button>
+            <button class="mot">Hello</button>
+            <button class="mot">World</button>
             <button class="delete" onclick="deleteWord()">Delete</button>
         </div>
         <div id="k-keyboard">

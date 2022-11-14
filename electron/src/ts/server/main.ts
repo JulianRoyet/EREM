@@ -58,17 +58,18 @@ wss.on('connection', function connection(ws) {
 
 
 app.whenReady().then(() => {
-  backend = spawn("cmd.exe", ["/C", "start /B python ..\\backend\\server.py"]);
+  // backend = spawn("cmd.exe", ["/C", "start /B python ..\\backend\\server.py"]);
   
-  backend.on('spawn', () => {
-    createWindow()
-    console.log("ready")
-  })
+  // backend.on('spawn', () => {
+  //   createWindow()
+  //   console.log("ready")
+  // })
 
   
-  backend.stdout.on('data', (data) =>{
-    console.log(`BACKEND: ${data}`)
-  });
+  // backend.stdout.on('data', (data) =>{
+  //   console.log(`BACKEND: ${data}`)
+  // });
+  createWindow();
   
 })
 
