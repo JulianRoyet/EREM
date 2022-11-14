@@ -3,7 +3,7 @@ import itertools
 import os
 import copy
 import edlib
-os.environ['TRANSFORMERS_CACHE'] = "C:\\Users\\RedSk\\Documents\\prog\\EREM\\backend\\cache"
+os.environ['TRANSFORMERS_CACHE'] = os.path.abspath("../backend/cache")
 
 import math
 import random
