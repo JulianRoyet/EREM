@@ -155,10 +155,12 @@ class KeyPress{
 }
 
 export class Candidate{
+    key: number;
     index: number;
     score: number;
 
-    constructor(idx: number, s: number){
+    constructor(key: number, idx: number, s: number){
+        this.key = key;
         this.index = idx;
         this.score = s;
     }
@@ -267,7 +269,7 @@ export class KeyboardManager{
             })
             let absolute = keypress.scores[keypress.key];
             let p = Math.log(1+absolute)*absolute/(total+1);
-            return new Candidate(idx, p);
+            return new Candidate(keypress.key, idx, p);
         });
     }
 

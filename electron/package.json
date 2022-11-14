@@ -2,7 +2,7 @@
   "name": "EREM",
   "version": "1.0.0",
   "description": "Expressive Rapid Eye Movement: Fluid visual text input",
-  "main": "src/js/server/main.js",
+  "main": "src/server/js/main.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "build": "tsc --rootDir UI/ts --outDir UI/js",

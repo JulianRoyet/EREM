@@ -3,7 +3,7 @@ from concurrent import futures
 import grpc
 import EremApi_pb2_grpc as api
 import EremApi_pb2 as pro
-import prophet
+#import prophet
 
 def generateSuggestions(suggestions):
     print(str(suggestions))
@@ -22,8 +22,8 @@ server = grpc.server(futures.ThreadPoolExecutor(max_workers=1))
 api.add_EremApiServicer_to_server(Servicer(), server)
 
 print("START")
-prophet.init()
-pred = prophet.predict("")
+#prophet.init()
+#pred = prophet.predict("")
 
 server.add_insecure_port('localhost:' + str(port))
 server.start()
