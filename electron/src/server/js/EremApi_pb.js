@@ -179,8 +179,9 @@ proto.Candidate.prototype.toObject = function(opt_includeInstance) {
  */
 proto.Candidate.toObject = function(includeInstance, msg) {
   var f, obj = {
-    index: jspb.Message.getFieldWithDefault(msg, 1, 0),
-    score: jspb.Message.getFloatingPointFieldWithDefault(msg, 2, 0.0)
+    key: jspb.Message.getFieldWithDefault(msg, 1, 0),
+    index: jspb.Message.getFieldWithDefault(msg, 2, 0),
+    score: jspb.Message.getFloatingPointFieldWithDefault(msg, 3, 0.0)
   };
 
   if (includeInstance) {
@@ -219,9 +220,13 @@ proto.Candidate.deserializeBinaryFromReader = function(msg, reader) {
     switch (field) {
     case 1:
       var value = /** @type {number} */ (reader.readInt32());
-      msg.setIndex(value);
+      msg.setKey(value);
       break;
     case 2:
+      var value = /** @type {number} */ (reader.readInt32());
+      msg.setIndex(value);
+      break;
+    case 3:
       var value = /** @type {number} */ (reader.readFloat());
       msg.setScore(value);
       break;
@@ -254,17 +259,24 @@ proto.Candidate.prototype.serializeBinary = function() {
  */
 proto.Candidate.serializeBinaryToWriter = function(message, writer) {
   var f = undefined;
-  f = message.getIndex();
+  f = message.getKey();
   if (f !== 0) {
     writer.writeInt32(
       1,
       f
     );
   }
+  f = message.getIndex();
+  if (f !== 0) {
+    writer.writeInt32(
+      2,
+      f
+    );
+  }
   f = message.getScore();
   if (f !== 0.0) {
     writer.writeFloat(
-      2,
+      3,
       f
     );
   }
@@ -272,10 +284,10 @@ proto.Candidate.serializeBinaryToWriter = function(message, writer) {
 
 
 /**
- * optional int32 index = 1;
+ * optional int32 key = 1;
  * @return {number}
  */
-proto.Candidate.prototype.getIndex = function() {
+proto.Candidate.prototype.getKey = function() {
   return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 1, 0));
 };
 
@@ -284,17 +296,35 @@ proto.Candidate.prototype.getIndex = function() {
  * @param {number} value
  * @return {!proto.Candidate} returns this
  */
-proto.Candidate.prototype.setIndex = function(value) {
+proto.Candidate.prototype.setKey = function(value) {
   return jspb.Message.setProto3IntField(this, 1, value);
 };
 
 
 /**
- * optional float score = 2;
+ * optional int32 index = 2;
+ * @return {number}
+ */
+proto.Candidate.prototype.getIndex = function() {
+  return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 2, 0));
+};
+
+
+/**
+ * @param {number} value
+ * @return {!proto.Candidate} returns this
+ */
+proto.Candidate.prototype.setIndex = function(value) {
+  return jspb.Message.setProto3IntField(this, 2, value);
+};
+
+
+/**
+ * optional float score = 3;
  * @return {number}
  */
 proto.Candidate.prototype.getScore = function() {
-  return /** @type {number} */ (jspb.Message.getFloatingPointFieldWithDefault(this, 2, 0.0));
+  return /** @type {number} */ (jspb.Message.getFloatingPointFieldWithDefault(this, 3, 0.0));
 };
 
 
@@ -303,7 +333,7 @@ proto.Candidate.prototype.getScore = function() {
  * @return {!proto.Candidate} returns this
  */
 proto.Candidate.prototype.setScore = function(value) {
-  return jspb.Message.setProto3FloatField(this, 2, value);
+  return jspb.Message.setProto3FloatField(this, 3, value);
 };
 
 

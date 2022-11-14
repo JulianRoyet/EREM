@@ -7,6 +7,8 @@
 import * as jspb from "google-protobuf";
 
 export class Candidate extends jspb.Message { 
+    getKey(): number;
+    setKey(value: number): Candidate;
     getIndex(): number;
     setIndex(value: number): Candidate;
     getScore(): number;
@@ -24,6 +26,7 @@ export class Candidate extends jspb.Message {
 
 export namespace Candidate {
     export type AsObject = {
+        key: number,
         index: number,
         score: number,
     }

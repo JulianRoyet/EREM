@@ -1,30 +1,28 @@
-"use strict";
-exports.__esModule = true;
-var keyboard_1 = require("./keyboard");
+import { KeyLine, Key, CursorSettings, KeyboardManager } from "./keyboard.js";
 document.addEventListener("DOMContentLoaded", function () {
     console.log("TTTEEESSSSTTTTT");
     ready();
 });
-var layout = {
+let layout = {
     lines: [
-        new keyboard_1.KeyLine([keyboard_1.Key.B, keyboard_1.Key.R, keyboard_1.Key.D, keyboard_1.Key.G, keyboard_1.Key.T, keyboard_1.Key.P, keyboard_1.Key.L, keyboard_1.Key.K]),
-        new keyboard_1.KeyLine([keyboard_1.Key.J, keyboard_1.Key.N, keyboard_1.Key.F, keyboard_1.Key.V, keyboard_1.Key.S, keyboard_1.Key.CH, keyboard_1.Key.M, keyboard_1.Key.Z]),
-        new keyboard_1.KeyLine([keyboard_1.Key.A, keyboard_1.Key.I, keyboard_1.Key.O, keyboard_1.Key.U, keyboard_1.Key.Y, keyboard_1.Key.GN, keyboard_1.Key.W]),
-        new keyboard_1.KeyLine([keyboard_1.Key.AN, keyboard_1.Key.EU, keyboard_1.Key.E, keyboard_1.Key.IN, keyboard_1.Key.ON, keyboard_1.Key.OU])
+        new KeyLine([Key.B, Key.R, Key.D, Key.G, Key.T, Key.P, Key.L, Key.K]),
+        new KeyLine([Key.J, Key.N, Key.F, Key.V, Key.S, Key.CH, Key.M, Key.Z]),
+        new KeyLine([Key.A, Key.I, Key.O, Key.U, Key.Y, Key.GN, Key.W]),
+        new KeyLine([Key.AN, Key.EU, Key.E, Key.IN, Key.ON, Key.OU])
     ]
 };
-var url = "ws://localhost:8080";
-var server = new WebSocket(url);
-var manager;
-var sentence = "";
-var suggestions;
+const url = "ws://localhost:8080";
+const server = new WebSocket(url);
+let manager;
+let sentence = "";
+let suggestions;
 function send(candidates) {
     if (candidates.length > 0) {
-        var simplified = candidates.map(function (c) {
+        let simplified = candidates.map(c => {
             return [c.index, c.score];
         });
         console.log(simplified);
-        var message = {
+        let message = {
             type: "getSuggestions",
             content: simplified
         };
@@ -32,7 +30,7 @@ function send(candidates) {
     }
 }
 function setSentence(sentence) {
-    var message = {
+    let message = {
         type: "setSentence",
         content: sentence
     };
@@ -43,15 +41,15 @@ function selectSuggestion(idx) {
     setSentence(sentence);
 }
 function displayText(msg) {
-    var textarea = document.getElementById('textarea');
+    let textarea = document.getElementById('textarea');
     textarea.value += msg + " ";
 }
 function deleteWord() {
-    var textarea = document.getElementById('textarea');
-    var contenu = textarea.value;
-    var tab = contenu.split(" ");
+    let textarea = document.getElementById('textarea');
+    let contenu = textarea.value;
+    let tab = contenu.split(" ");
     textarea.value = "";
-    for (var i = 0; i < tab.length - 2; i++) {
+    for (let i = 0; i < tab.length - 2; i++) {
         textarea.value += tab[i] + " ";
     }
 }
@@ -60,28 +58,29 @@ function reset() {
 }
 function updateSuggestionsDisplay() {
     //TODO: mettre à jour les boutons suggestions à partir du tableau: suggestions: string[]
-    var buttons = document.querySelectorAll('.mot');
-    buttons.forEach(function (button, index) {
+    let buttons = document.querySelectorAll('.mot');
+    buttons.forEach((button, index) => {
         button.innerHTML = suggestions[index];
     });
 }
 server.onopen = function () {
     setSentence(sentence);
+    console.log("test");
     //TODO: LOADING SCREEN ON
 };
 function ready() {
-    manager = new keyboard_1.KeyboardManager(layout, new keyboard_1.CursorSettings(), send);
+    manager = new KeyboardManager(layout, new CursorSettings(), send);
     console.log("TEEEESSSTTTTT");
-    var buttons = document.querySelectorAll('.mot');
-    buttons.forEach(function (button, index) {
-        button.addEventListener('click', function (e) {
+    let buttons = document.querySelectorAll('.mot');
+    buttons.forEach((button, index) => {
+        button.addEventListener('click', (e) => {
             displayText(suggestions[index]);
         });
     });
     //TODO: LOADING SCREEN OFF
 }
 server.onmessage = function (event) {
-    var message = JSON.parse(event.data);
+    let message = JSON.parse(event.data);
     console.log(message.type);
     switch (message.type) {
         case "ready":

@@ -1,4 +1,4 @@
-import { Layout, KeyLine, Key, CursorSettings, KeyboardManager, Candidate} from "./keyboard"
+import { Layout, KeyLine, Key, CursorSettings, KeyboardManager, Candidate} from "./keyboard.js"
 
 document.addEventListener("DOMContentLoaded", function(){
     console.log("TTTEEESSSSTTTTT");
@@ -76,6 +76,7 @@ function updateSuggestionsDisplay(){
 
 server.onopen = function(){
     setSentence(sentence);
+    console.log("test");
     //TODO: LOADING SCREEN ON
 }
 

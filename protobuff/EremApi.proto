@@ -1,8 +1,9 @@
 syntax = "proto3";
 
 message Candidate{
-    int32 index = 1;
-    float score = 2;
+    int32 key = 1;
+    int32 index = 2;
+    float score = 3;
 }
 message CandidateUpdate{
     repeated Candidate data = 1;
