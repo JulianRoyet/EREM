@@ -1,9 +1,6 @@
-var url = "ws://localhost:8080";
-var server = new WebSocket(url);
-server.onopen = function () {
-    initKeyboard();
-    initPointer();
-};
+"use strict";
+exports.__esModule = true;
+exports.KeyboardManager = exports.Candidate = exports.CursorSettings = exports.KeyLine = exports.Key = void 0;
 function makeFrag(templateId) {
     var frag = document.createDocumentFragment();
     var template = document.getElementById(templateId);
@@ -45,16 +42,18 @@ var Key;
     Key["U"] = "u";
     Key["CH"] = "ch";
     Key["GN"] = "\u00F1";
-})(Key || (Key = {}));
+})(Key = exports.Key || (exports.Key = {}));
 var KeyLine = /** @class */ (function () {
     function KeyLine(k) {
         this.keys = k;
     }
     return KeyLine;
 }());
+exports.KeyLine = KeyLine;
 var Keyboard = /** @class */ (function () {
     function Keyboard(layout) {
         var _this = this;
+        var keyboardElement = document.querySelector("#k-keyboard");
         this.keys = [];
         var len = Object.keys(Key).length;
         for (var i = 0; i < len; i++) {
@@ -72,26 +71,11 @@ var Keyboard = /** @class */ (function () {
             });
             _this.element.querySelector(".k-lines").appendChild(gline);
         });
+        keyboardElement.appendChild(this.element);
     }
     return Keyboard;
 }());
 var keyboards = [];
-function initKeyboard() {
-    var keyboardElements = document.querySelectorAll(".k-keyboard");
-    var layout = {
-        lines: [
-            new KeyLine([Key.B, Key.R, Key.D, Key.G, Key.T, Key.P, Key.L, Key.K]),
-            new KeyLine([Key.J, Key.N, Key.F, Key.V, Key.S, Key.CH, Key.M, Key.Z]),
-            new KeyLine([Key.A, Key.I, Key.O, Key.U, Key.Y, Key.GN, Key.W]),
-            new KeyLine([Key.AN, Key.EU, Key.E, Key.IN, Key.ON, Key.OU])
-        ]
-    };
-    keyboardElements.forEach(function (kb) {
-        var kbo = new Keyboard(layout);
-        keyboards.push(kbo);
-        kb.appendChild(kbo.element);
-    });
-}
 var TimePoint = /** @class */ (function () {
     function TimePoint(x, y, t) {
         this.x = x;
@@ -101,11 +85,11 @@ var TimePoint = /** @class */ (function () {
     return TimePoint;
 }());
 var Cursor = /** @class */ (function () {
-    function Cursor() {
+    function Cursor(settings) {
         this.size = 0;
         this.lastPoint = null;
         this.elapsed = 0;
-        this.settings = new CursorSettings();
+        this.settings = settings;
     }
     Cursor.prototype.update = function (p) {
         if (this.lastPoint != null) {
@@ -151,6 +135,7 @@ var CursorSettings = /** @class */ (function () {
     }
     return CursorSettings;
 }());
+exports.CursorSettings = CursorSettings;
 function pointDistance(g1, g2) {
     var x = g1.x - g2.x;
     var y = g1.y - g2.y;
@@ -181,33 +166,51 @@ var Candidate = /** @class */ (function () {
     }
     return Candidate;
 }());
-var CursorManager = /** @class */ (function () {
-    function CursorManager(cursor, keyboard, keyHandler) {
+exports.Candidate = Candidate;
+var KeyboardManager = /** @class */ (function () {
+    function KeyboardManager(keyboardLayout, settings, keyHandler) {
         this.lastUpdateTimestamp = 0;
+        var pointer = document.getElementById('pointer');
+        var mouseX = 0;
+        var mouseY = 0;
+        this.cursor = new Cursor(settings);
+        this.keyboard = new Keyboard(keyboardLayout);
+        var interval = setInterval(function () {
+            var timestamp = Date.now();
+            this.cursor.update(new TimePoint(mouseX, mouseY, timestamp));
+            this.update(timestamp);
+            var d = this.cursor.settings.minDiameter + this.cursor.size;
+            pointer.style.width = d + 'px';
+            pointer.style.height = d + 'px';
+            pointer.style.left = mouseX - pointer.offsetWidth / 2.0 + 'px';
+            pointer.style.top = mouseY - pointer.offsetHeight / 2.0 + 'px';
+        }, 15);
+        document.addEventListener('mousemove', function (e) {
+            mouseX = e.pageX;
+            mouseY = e.pageY;
+        });
         this.stateArray = [];
         var len = Object.values(Key).length;
         for (var i = 0; i < len; i++) {
             this.stateArray.push(new KeyState());
         }
         this.keyPressList = [];
-        this.cursor = cursor;
-        this.keyboard = keyboard;
         this.lastUpdateTimestamp = Date.now();
         this.keyHandler = keyHandler;
     }
-    CursorManager.prototype.score = function (elapsed, distance) {
+    KeyboardManager.prototype.score = function (elapsed, distance) {
         return 1000 * elapsed / (1 + distance * this.cursor.size);
     };
-    CursorManager.prototype.updateScore = function (idx, timestamp, distance) {
+    KeyboardManager.prototype.updateScore = function (idx, timestamp, distance) {
         var elapsed = timestamp - this.lastUpdateTimestamp;
         this.stateArray[idx].scoreDelta = this.score(elapsed, distance);
     };
-    CursorManager.prototype.getScores = function () {
+    KeyboardManager.prototype.getScores = function () {
         return this.stateArray.map(function (keyState) {
             return keyState.scoreDelta;
         });
     };
-    CursorManager.prototype.saveScores = function (idx, scores) {
+    KeyboardManager.prototype.saveScores = function (idx, scores) {
         if (this.stateArray[idx].active) {
             var listIndex = this.stateArray[idx].index;
             var candidate = this.keyPressList[listIndex];
@@ -218,7 +221,7 @@ var CursorManager = /** @class */ (function () {
             this.toSend.push(listIndex);
         }
     };
-    CursorManager.prototype.updateKey = function (idx, timestamp, distance) {
+    KeyboardManager.prototype.updateKey = function (idx, timestamp, distance) {
         var active = distance < (this.cursor.size + this.cursor.settings.minDiameter) / 2;
         if (this.stateArray[idx].active) {
             this.updateScore(idx, timestamp, distance);
@@ -237,7 +240,7 @@ var CursorManager = /** @class */ (function () {
             }
         }
     };
-    CursorManager.prototype.candidateScores = function () {
+    KeyboardManager.prototype.candidateScores = function () {
         var _this = this;
         return this.toSend.map(function (idx) {
             var keypress = _this.keyPressList[idx];
@@ -249,7 +252,7 @@ var CursorManager = /** @class */ (function () {
             return new Candidate(idx, p);
         });
     };
-    CursorManager.prototype.update = function (timestamp) {
+    KeyboardManager.prototype.update = function (timestamp) {
         var distances = this.cursor.allKeyDistances(this.keyboard);
         var scores = this.getScores();
         for (var i = 0; i < this.stateArray.length; i++) {
@@ -263,40 +266,6 @@ var CursorManager = /** @class */ (function () {
         var data = this.candidateScores();
         this.keyHandler(data);
     };
-    return CursorManager;
+    return KeyboardManager;
 }());
-var cursorManagers = [];
-function send(candidates) {
-    if (candidates.length > 0) {
-        var simplified = candidates.map(function (c) {
-            return [c.index, c.score];
-        });
-        console.log(simplified);
-        var message = {
-            type: "getSuggestions",
-            content: simplified
-        };
-        server.send(JSON.stringify(message));
-    }
-}
-function initPointer() {
-    var pointer = document.getElementById('pointer');
-    var mouseX = 0;
-    var mouseY = 0;
-    var cursor = new Cursor();
-    cursorManagers.push(new CursorManager(cursor, keyboards[0], send));
-    var interval = setInterval(function () {
-        var timestamp = Date.now();
-        cursor.update(new TimePoint(mouseX, mouseY, timestamp));
-        cursorManagers[0].update(timestamp);
-        var d = cursor.settings.minDiameter + cursor.size;
-        pointer.style.width = d + 'px';
-        pointer.style.height = d + 'px';
-        pointer.style.left = mouseX - pointer.offsetWidth / 2.0 + 'px';
-        pointer.style.top = mouseY - pointer.offsetHeight / 2.0 + 'px';
-    }, 15);
-    document.addEventListener('mousemove', function (e) {
-        mouseX = e.pageX;
-        mouseY = e.pageY;
-    });
-}
+exports.KeyboardManager = KeyboardManager;

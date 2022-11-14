@@ -1,9 +1,4 @@
-const url = "ws://localhost:8080"
-const server = new WebSocket(url)
-server.onopen = function(){
-    initKeyboard();
-    initPointer();
-}
+
 
 function makeFrag(templateId: string): DocumentFragment{
     let frag = document.createDocumentFragment();
@@ -19,7 +14,7 @@ function makeElem(templateId: string): HTMLElement{
     return template.cloneNode(true) as HTMLElement;
 }
 
-enum Key{
+export enum Key{
     A = "a", K = "k", P = "p", E = "é/è",
     L = "L", ON = "on", T = "T", R = "R",
     Y = "y", O = "o", F = "f", S = "s",
@@ -30,13 +25,13 @@ enum Key{
     GN = "ñ"
 }
 
-class KeyLine{
+export class KeyLine{
     keys:Key[];
     constructor(k: Key[]){
         this.keys = k;
     }
 }
-interface Layout{
+export interface Layout{
     lines:KeyLine[]
 }
 class Keyboard{
@@ -44,6 +39,9 @@ class Keyboard{
     keys: HTMLElement[];
 
     constructor(layout: Layout){
+
+        let keyboardElement = document.querySelector("#k-keyboard");
+
         this.keys = []
         let len = Object.keys(Key).length;
         for (let i = 0; i < len; i++) {
@@ -62,27 +60,12 @@ class Keyboard{
             });
             this.element.querySelector(".k-lines").appendChild(gline);
         });
+
+        keyboardElement.appendChild(this.element);
     }
 }
 
 let keyboards = [];
-
-function initKeyboard() {
-    let keyboardElements = document.querySelectorAll(".k-keyboard");
-    let layout: Layout = {
-        lines: [
-            new KeyLine([Key.B, Key.R, Key.D, Key.G, Key.T, Key.P, Key.L, Key.K]),
-            new KeyLine([Key.J, Key.N, Key.F, Key.V, Key.S, Key.CH, Key.M, Key.Z]),
-            new KeyLine([Key.A, Key.I, Key.O, Key.U, Key.Y, Key.GN, Key.W]),
-            new KeyLine([Key.AN, Key.EU, Key.E, Key.IN, Key.ON, Key.OU])
-        ]
-    };
-    keyboardElements.forEach(kb => {
-        let kbo = new Keyboard(layout);
-        keyboards.push(kbo);
-        kb.appendChild(kbo.element);
-    });
-}
 
 class TimePoint{
     x: number;
@@ -99,8 +82,8 @@ class Cursor{
     lastPoint: TimePoint = null;
     elapsed: number = 0;
     settings: CursorSettings;
-    constructor(){
-        this.settings = new CursorSettings();
+    constructor(settings){
+        this.settings = settings;
     }
 
     update(p: TimePoint){
@@ -138,7 +121,7 @@ class Cursor{
     }
 }
 
-class CursorSettings{
+export class CursorSettings{
     minDiameter: number = 70;
     maxDiameter: number = 300;
 
@@ -171,7 +154,7 @@ class KeyPress{
     }
 }
 
-class Candidate{
+export class Candidate{
     index: number;
     score: number;
 
@@ -181,7 +164,7 @@ class Candidate{
     }
 }
 
-class CursorManager{
+export class KeyboardManager{
     stateArray: KeyState[];
     keyPressList: KeyPress[];
     toSend: number[];
@@ -190,15 +173,41 @@ class CursorManager{
     keyboard: Keyboard;
     keyHandler: (candidates: Candidate[]) => void;
 
-    constructor(cursor: Cursor, keyboard: Keyboard, keyHandler: (candidates: Candidate[]) => void){
+    constructor(keyboardLayout: Layout, settings: CursorSettings, keyHandler: (candidates: Candidate[]) => void){
+        let pointer = document.getElementById('pointer');
+
+        let mouseX: number = 0;
+        let mouseY: number = 0;
+        this.cursor = new Cursor(settings);
+        this.keyboard = new Keyboard(keyboardLayout);
+        
+        
+        const interval = setInterval(function() {
+            let timestamp = Date.now();
+            this.cursor.update(new TimePoint(mouseX, mouseY, timestamp))
+            this.update(timestamp);
+            
+            let d = this.cursor.settings.minDiameter + this.cursor.size;
+
+            pointer.style.width = d + 'px';
+            pointer.style.height = d + 'px';
+
+            pointer.style.left = mouseX - pointer.offsetWidth/2.0 + 'px';
+            pointer.style.top = mouseY - pointer.offsetHeight/2.0 + 'px';
+            
+        }, 15);
+
+        document.addEventListener('mousemove', (e) =>{
+            mouseX = e.pageX;
+            mouseY = e.pageY;
+        });
+        
         this.stateArray = [];
         let len = Object.values(Key).length;
         for(let i=0; i < len; i++){
             this.stateArray.push(new KeyState());
         }
         this.keyPressList = [];
-        this.cursor = cursor;
-        this.keyboard = keyboard;
         this.lastUpdateTimestamp = Date.now();
         this.keyHandler = keyHandler;
     }
@@ -283,51 +292,6 @@ class CursorManager{
 }
 
 
-let cursorManagers = [];
-
-function send(candidates: Candidate[]){
-    if(candidates.length > 0){
-        let simplified = candidates.map(c => {
-            return [c.index, c.score];
-        })
-        console.log(simplified);
-        let message = {
-            type: "getSuggestions",
-            content: simplified
-        };
-        server.send(JSON.stringify(message));
-    }
-}
-
-function initPointer(){
-    let pointer = document.getElementById('pointer');
-
-    let mouseX: number = 0;
-    let mouseY: number = 0;
-    let cursor = new Cursor();
-    
-    cursorManagers.push(new CursorManager(cursor, keyboards[0], send));
-    
-    const interval = setInterval(function() {
-        let timestamp = Date.now();
-        cursor.update(new TimePoint(mouseX, mouseY, timestamp))
-        cursorManagers[0].update(timestamp);
-        
-        let d = cursor.settings.minDiameter + cursor.size;
-
-        pointer.style.width = d + 'px';
-        pointer.style.height = d + 'px';
-
-        pointer.style.left = mouseX - pointer.offsetWidth/2.0 + 'px';
-        pointer.style.top = mouseY - pointer.offsetHeight/2.0 + 'px';
-        
-    }, 15);
-
-    document.addEventListener('mousemove', (e) =>{
-        mouseX = e.pageX;
-        mouseY = e.pageY;
-    });
-}
 
 
 
