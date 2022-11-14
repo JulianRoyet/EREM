@@ -65,8 +65,6 @@ class Keyboard{
     }
 }
 
-let keyboards = [];
-
 class TimePoint{
     x: number;
     y: number;
@@ -184,7 +182,7 @@ export class KeyboardManager{
         this.keyboard = new Keyboard(keyboardLayout);
         
         
-        const interval = setInterval(function() {
+        const interval = setInterval(() => {
             let timestamp = Date.now();
             this.cursor.update(new TimePoint(mouseX, mouseY, timestamp))
             this.update(timestamp);

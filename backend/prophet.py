@@ -10,12 +10,13 @@ import random
 from transformers import CamembertModel, CamembertTokenizer, pipeline
 import difflib as dl
 from joblib import Parallel, delayed
-
+import kmeans1d as km
 
 class Prophet:
     prophet_predict = None
     pdict = None
     candidates = None
+    predictions = None
 
     def __init__(self):
 
@@ -53,10 +54,9 @@ class Prophet:
         
         pres = sorted(pres, key=lambda x: x[1])
         
-        pred =  {key:   [functools.reduce(lambda a, e: (e[0].lower(), e[1], a[2] + e[2]), list(capgroup), ("","",0.0)) 
+        self.prediction =  {key:   [functools.reduce(lambda a, e: (e[0].lower(), e[1], a[2] + e[2]), list(capgroup), ("","",0.0)) 
                         for capkey, capgroup in itertools.groupby(sorted(list(group), key=lambda p: p[0].lower()), lambda p: p[0].lower()) ]
                         for key, group in itertools.groupby(pres, lambda p: p[1])}
-        return pred
 
 
     def merge_with(self, f, A, B):
@@ -86,14 +86,14 @@ class Prophet:
 
         return self.merge_with_all(lambda x, y: x+y ,f)
 
-    def tune_prediction(self, prediction, candidates):
+    def tune_prediction(self, candidates):
         #ranks = pool(delayed( lambda p, n: {k: v*n[1] for k, v in pred_rank(p, n[0]).items()} )(prediction, c) for c in candidates)
-        ranks = [{k: v*n[1] for k, v in self.pred_rank(prediction, n[0]).items()} for n in candidates]
+        ranks = [{k: v*n[1] for k, v in self.pred_rank(self.prediction, n[0]).items()} for n in candidates]
         flat = self.merge_with_all(lambda x, y: x+y ,ranks)
         probs = [(k, v) for k, v in flat.items()]
         return sorted(probs, key=lambda x: x[1], reverse=True)[:10]
 
-    def generate_suggestions(L, max):
+    def generate_suggestions(self, L, max, threshold):
         
         def worker(SL):
             if(len(SL) == 0):
@@ -110,18 +110,29 @@ class Prophet:
             return [(c[0], c[1]*(1-p)) for c in candidates] + [([letter] + c[0], c[1]*p) for c in candidates]
             
 
-        sorted_letters = [i for i in sorted(enumerate(L), key=lambda x:abs(x[1][1] - 0.5), reverse=True)]
+        sorted_letters = [i for i in sorted(enumerate(L), key=lambda x:abs(x[1][1] - threshold), reverse=True)]
 
         candidates = worker(sorted_letters)
 
         reordered = [(sorted(c[0], key=lambda x:x[0]), c[1]) for c in candidates]
 
         return sorted(reordered, key=lambda x:x[1], reverse=True)[:max]
-
     
+    def find_threshold(self):
+        scores = sorted([c[1] for c in self.candidates])
+        if(len(scores)== 1):
+            return scores[0]
+        
+        clusters = km.cluster(scores, 2)
+        idx = clusters.find(1)
+        return (scores[idx-1]+scores[idx])/2
 
     def get_suggestions(self):
-        pass
+        threshold = self.find_threshold()
+        generated = self.generate_suggestions(self.candidates, 20, threshold)
+        self.suggestions = self.tune_prediction(generated)
+
+        return self.suggestions
 
     def extend_array(self, array, size):
         for i in range(size):
@@ -135,3 +146,7 @@ class Prophet:
                 self.candidates = self.extend_array(self.candidates, 3*(1 + c[1] - cl))
             
             self.candidates[c[1]] = (c[0], c[2])
+    
+    def multi_update_candidates(self, updates):
+        for u in updates:
+            self.update_candidates(u)

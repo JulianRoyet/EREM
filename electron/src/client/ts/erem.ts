@@ -50,9 +50,12 @@ function updateSuggestionsDisplay(){
     //TODO: mettre à jour les boutons suggestions à partir du tableau: suggestions: string[]
 }
 
+function ready(){
+    manager = new KeyboardManager(layout, new CursorSettings(), send);
+}
 server.onopen = function(){
     setSentence(sentence);
-    console.log("test");
+    ready();
     //TODO: LOADING SCREEN ON
 }
 server.onmessage = function(event: any){
@@ -60,7 +63,7 @@ server.onmessage = function(event: any){
 
     switch (message.type) {
         case "ready":
-            manager = new KeyboardManager(layout, new CursorSettings(), send);
+            
             //TODO: LOADING SCREEN OFF
             break;
         case "suggestions":
