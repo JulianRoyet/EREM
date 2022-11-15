@@ -130,9 +130,8 @@ class Prophet:
     def get_suggestions(self):
         threshold = self.find_threshold()
         generated = self.generate_suggestions(self.candidates, 20, threshold)
-        self.suggestions = self.tune_prediction(generated)
 
-        return self.suggestions
+        return self.tune_prediction(generated)
 
     def extend_array(self, array, size):
         for i in range(size):

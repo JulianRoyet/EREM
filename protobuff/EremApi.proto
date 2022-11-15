@@ -14,13 +14,9 @@ message Suggestions{
 message Sentence{
     string word = 1;
 }
-message Ready{
-    bool ready = 1;
-}
 message Void{}
 
 service EremApi{
     rpc getSuggestions(CandidateUpdate) returns (Suggestions){}
     rpc setSentence(Sentence) returns (Void){}
-    rpc isReady(Void) returns (Ready){}
 }
