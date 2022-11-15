@@ -8,8 +8,9 @@ var EremApi_pb_1 = require("./EremApi_pb");
 var WebSocket = require('ws');
 // Set up server
 var wss = new WebSocket.Server({ port: 8080 });
+var client;
 var spawn = require("child_process").spawn;
-var api = new EremApi_1.EremApi('localhost:8765', grpc.credentials.createInsecure());
+var api;
 var backend = null;
 var createWindow = function () {
     var win = new BrowserWindow({
@@ -22,18 +23,32 @@ var createWindow = function () {
 function handleCandidates(message) {
     var candidates = new EremApi_pb_1.CandidateUpdate();
     var data = message.map(function (e) {
+        console.log("elem: ", e);
         var c = new EremApi_pb_1.Candidate();
-        c.setIndex(e[0]);
-        c.setScore(e[1]);
+        c.setKey(e[0]);
+        c.setIndex(e[1]);
+        c.setScore(e[2]);
         return c;
     });
-    console.log(data);
     candidates.setDataList(data);
     api.getSuggestions(candidates, function (err, response) {
         console.log('suggestions:', response);
     });
 }
+function ready() {
+    api = new EremApi_1.EremApi('localhost:8765', grpc.credentials.createInsecure());
+    var message = {
+        type: "ready",
+        content: null
+    };
+    client.send(JSON.stringify(message));
+}
+function setSentence(sentence) {
+    api.setSentence(sentence, function (err, response) {
+    });
+}
 wss.on('connection', function connection(ws) {
+    client = ws;
     ws.on('message', function incoming(message) {
         var parsed = JSON.parse(message);
         switch (parsed.type) {
@@ -41,6 +56,7 @@ wss.on('connection', function connection(ws) {
                 handleCandidates(parsed.content);
                 break;
             case "setSentence":
+                setSentence(parsed.content);
                 break;
             default:
                 console.log("unknown message type: " + parsed.type);
@@ -49,13 +65,15 @@ wss.on('connection', function connection(ws) {
     });
 });
 app.whenReady().then(function () {
-    backend = spawn("cmd.exe", ["/C", "start /B python ..\\backend\\server.py"]);
+    backend = spawn("cmd.exe", ["/C", "start /B python -u ..\\backend\\server.py"]);
     backend.on('spawn', function () {
         createWindow();
-        console.log("ready");
     });
     backend.stdout.on('data', function (data) {
-        console.log("BACKEND: ".concat(data));
+        if ("".concat(data).trim().includes("<READY>"))
+            ready();
+        else
+            console.log("BACKEND: ".concat(data));
     });
 });
 app.on('window-all-closed', function () {

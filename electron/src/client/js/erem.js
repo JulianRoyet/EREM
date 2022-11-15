@@ -15,7 +15,7 @@ let suggestions;
 function send(candidates) {
     if (candidates.length > 0) {
         let simplified = candidates.map(c => {
-            return [c.index, c.score];
+            return [c.key, c.index, c.score];
         });
         console.log(simplified);
         let message = {
@@ -43,18 +43,18 @@ function updateSuggestionsDisplay() {
     //TODO: mettre à jour les boutons suggestions à partir du tableau: suggestions: string[]
 }
 function ready() {
+    setSentence(sentence);
     manager = new KeyboardManager(layout, new CursorSettings(), send);
 }
 server.onopen = function () {
-    setSentence(sentence);
-    ready();
     //TODO: LOADING SCREEN ON
 };
 server.onmessage = function (event) {
     let message = JSON.parse(event.data);
     switch (message.type) {
         case "ready":
-            //TODO: LOADING SCREEN OFF
+            console.log("READYYY");
+            ready();
             break;
         case "suggestions":
             suggestions = message.content;

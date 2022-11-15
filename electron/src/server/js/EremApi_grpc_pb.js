@@ -15,17 +15,6 @@ function deserialize_CandidateUpdate(buffer_arg) {
   return EremApi_pb.CandidateUpdate.deserializeBinary(new Uint8Array(buffer_arg));
 }
 
-function serialize_Ready(arg) {
-  if (!(arg instanceof EremApi_pb.Ready)) {
-    throw new Error('Expected argument of type Ready');
-  }
-  return Buffer.from(arg.serializeBinary());
-}
-
-function deserialize_Ready(buffer_arg) {
-  return EremApi_pb.Ready.deserializeBinary(new Uint8Array(buffer_arg));
-}
-
 function serialize_Sentence(arg) {
   if (!(arg instanceof EremApi_pb.Sentence)) {
     throw new Error('Expected argument of type Sentence');
@@ -82,17 +71,6 @@ var EremApiService = exports.EremApiService = {
     requestDeserialize: deserialize_Sentence,
     responseSerialize: serialize_Void,
     responseDeserialize: deserialize_Void,
-  },
-  isReady: {
-    path: '/EremApi/isReady',
-    requestStream: false,
-    responseStream: false,
-    requestType: EremApi_pb.Void,
-    responseType: EremApi_pb.Ready,
-    requestSerialize: serialize_Void,
-    requestDeserialize: deserialize_Void,
-    responseSerialize: serialize_Ready,
-    responseDeserialize: deserialize_Ready,
   },
 };
 

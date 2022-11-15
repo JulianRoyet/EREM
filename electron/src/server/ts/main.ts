@@ -8,11 +8,10 @@ import { CandidateUpdate, Candidate, Suggestions, Sentence, Void } from "./EremA
 const WebSocket = require('ws');
 // Set up server
 const wss = new WebSocket.Server({ port: 8080 });
-
+let client;
 let spawn = require("child_process").spawn;
 
-let api = new EremApi('localhost:8765', grpc.credentials.createInsecure())
-
+let api;
 let backend = null;
 const createWindow = () => {
   const win = new BrowserWindow({
@@ -26,19 +25,37 @@ const createWindow = () => {
 function handleCandidates(message){
   let candidates = new CandidateUpdate();
   let data = message.map(e => {
+    console.log("elem: ", e);
     let c = new Candidate();
-    c.setIndex(e[0]);
-    c.setScore(e[1]);
+    c.setKey(e[0]);
+    c.setIndex(e[1]);
+    c.setScore(e[2]);
     return c;
   });
-  console.log(data);
   candidates.setDataList(data);
 
   api.getSuggestions(candidates, function(err, response) {
     console.log('suggestions:', response);
   });
 }
+
+function ready(){
+  api = new EremApi('localhost:8765', grpc.credentials.createInsecure())
+  
+  let message = {
+    type: "ready",
+    content: null
+  }
+  client.send(JSON.stringify(message));  
+}
+
+function setSentence(sentence: string){
+  api.setSentence(sentence, function (err, response){
+
+  });
+}
 wss.on('connection', function connection(ws) {
+  client = ws;
   
   ws.on('message', function incoming(message) {
     let parsed = JSON.parse(message)
@@ -47,7 +64,7 @@ wss.on('connection', function connection(ws) {
         handleCandidates(parsed.content);
         break;
       case "setSentence":
-
+        setSentence(parsed.content);
         break;
       default:
         console.log("unknown message type: " + parsed.type);
@@ -58,16 +75,20 @@ wss.on('connection', function connection(ws) {
 
 
 app.whenReady().then(() => {
-  backend = spawn("cmd.exe", ["/C", "start /B python ..\\backend\\server.py"]);
+  backend = spawn("cmd.exe", ["/C", "start /B python -u ..\\backend\\server.py"]);
   
   backend.on('spawn', () => {
     createWindow()
-    console.log("ready")
+    
   })
 
   
   backend.stdout.on('data', (data) =>{
-    console.log(`BACKEND: ${data}`)
+    
+    if(`${data}`.trim().includes("<READY>"))
+      ready();
+    else
+      console.log(`BACKEND: ${data}`)
   });
   
 })
