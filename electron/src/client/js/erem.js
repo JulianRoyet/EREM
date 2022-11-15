@@ -1,8 +1,4 @@
 import { KeyLine, Key, CursorSettings, KeyboardManager } from "./keyboard.js";
-document.addEventListener("DOMContentLoaded", function () {
-    console.log("TTTEEESSSSTTTTT");
-    ready();
-});
 let layout = {
     lines: [
         new KeyLine([Key.B, Key.R, Key.D, Key.G, Key.T, Key.P, Key.L, Key.K]),
@@ -16,6 +12,7 @@ const server = new WebSocket(url);
 let manager;
 let sentence = "";
 let suggestions;
+suggestions = ["test", "les", "mots"];
 function send(candidates) {
     if (candidates.length > 0) {
         let simplified = candidates.map(c => {
@@ -53,6 +50,10 @@ function deleteWord() {
         textarea.value += tab[i] + " ";
     }
 }
+function deleteAll() {
+    let textarea = document.getElementById('textarea');
+    textarea.value = "";
+}
 function reset() {
     setSentence(sentence);
 }
@@ -63,21 +64,45 @@ function updateSuggestionsDisplay() {
         button.innerHTML = suggestions[index];
     });
 }
+function loadingScreenOn() {
+    //TODO: LOADING SCREEN ON
+    document.getElementById('main').hidden = true;
+}
+function loadingScreenOff() {
+    //TODO: LOADING SCREEN OFF
+    document.getElementById('loading').hidden = true;
+    document.getElementById('main').hidden = false;
+}
 server.onopen = function () {
     setSentence(sentence);
-    console.log("test");
-    //TODO: LOADING SCREEN ON
+    loadingScreenOn();
+    ready();
+    updateSuggestionsDisplay();
 };
 function ready() {
     manager = new KeyboardManager(layout, new CursorSettings(), send);
-    console.log("TEEEESSSTTTTT");
     let buttons = document.querySelectorAll('.mot');
+    let timer;
     buttons.forEach((button, index) => {
-        button.addEventListener('click', (e) => {
-            displayText(suggestions[index]);
+        button.addEventListener('mouseenter', () => {
+            timer = setTimeout((e) => {
+                displayText(suggestions[index]);
+            }, 1000);
+        });
+        button.addEventListener('mouseleave', () => {
+            clearTimeout(timer);
         });
     });
-    //TODO: LOADING SCREEN OFF
+    let delete_button = document.querySelector('.delete');
+    delete_button.addEventListener('mouseenter', () => {
+        timer = setTimeout((e) => {
+            deleteAll();
+        }, 1000);
+    });
+    delete_button.addEventListener('mouseleave', () => {
+        clearTimeout(timer);
+    });
+    loadingScreenOff();
 }
 server.onmessage = function (event) {
     let message = JSON.parse(event.data);
@@ -94,12 +119,6 @@ server.onmessage = function (event) {
             console.log("unknown message type: " + message.type);
     }
 };
-document.addEventListener("DOMContentLoaded", function () {
-    ready();
-});
-document.addEventListener("DOMContentLoaded", function () {
-    ready();
-});
 //TODO: créer un écran de chargement (un div qui contient l'écran de chargement, on met juste le div en display:none quand le chargement est terminé, et on réactive l'affichage du reste de l'interface)
 //TODO: appeler selectSuggestion(i) quand on hover le bouton du mot suggéré i
 //TODO: le bouton reset appelle reset()
