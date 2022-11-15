@@ -121,7 +121,7 @@ class Cursor{
 
 export class CursorSettings{
     minDiameter: number = 70;
-    maxDiameter: number = 300;
+    maxDiameter: number = 0;
 
     reduceVelocity: number = 2.5;
     reduceTreshold: number = 7;
@@ -213,7 +213,7 @@ export class KeyboardManager{
     }
 
     score(elapsed: number, distance: number): number{
-        return 1000*elapsed / (1 + distance * this.cursor.size)
+        return 10*elapsed / (1 + distance * this.cursor.size)
     }
 
     updateScore(idx: number, timestamp: number, distance: number): void{

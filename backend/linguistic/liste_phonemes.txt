@@ -1,5 +1,4 @@
 symbole     son     exemples
-
 a           a       salut  chat  arbre
                      ^       ^   ^
 k           k       coup   appliquer  kart
@@ -10,7 +9,7 @@ E           é/è     éphémère  lait  dés
                     ^  ^ ^     ^^    ^
 l           l       lampe  aller  lettre
                     ^       ^^    ^
-§           on      action  rond  simulation
+%           on      action  rond  simulation
                         ^^   ^^           ^^
 t           t       train  attention  tour
                     ^       ^^        ^

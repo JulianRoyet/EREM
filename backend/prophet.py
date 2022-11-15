@@ -11,12 +11,18 @@ from transformers import CamembertModel, CamembertTokenizer, pipeline
 import difflib as dl
 from joblib import Parallel, delayed
 import kmeans1d as km
+from safeprint import print
 
 class Prophet:
     prophet_predict = None
     pdict = None
     candidates = None
     predictions = None
+    queued = 0
+
+    lut = ["a", "k", "p", "E", "l", "%", "t", "R", "j", "o",
+       "f", "s", "i", "d", "Z", "n", "5", "b", "u", "v", 
+       "@", "g", "2", "m", "z", "w", "y", "S", "N"]
 
     def __init__(self):
 
@@ -50,7 +56,7 @@ class Prophet:
     def predict(self, sentence):
         print("sentence: " + sentence)
         res = self.prophet_predict(sentence + "<mask>", )
-        pres = [(w["token_str"], self.pdict[w["token_str"].lower()], w["score"]) for w in res if w["token_str"].lower() in self.pdict.keys()]
+        pres = [(w["token_str"], self.pdict[w["token_str"].lower()], math.pow(w["score"], 1/15)) for w in res if w["token_str"].lower() in self.pdict.keys()]
         
         pres = sorted(pres, key=lambda x: x[1])
         
@@ -80,6 +86,7 @@ class Prophet:
 
 
     def pred_rank(self, prediction, query):
+        
         r = [self.pred_match(p, query) for p in prediction.keys()]
         d = {w[0]: w[1] for w in r}
         f = [{w[0]: w[2] * d[k] for w in v} for (k, v) in prediction.items()]
@@ -88,12 +95,16 @@ class Prophet:
 
     def tune_prediction(self, candidates):
         #ranks = pool(delayed( lambda p, n: {k: v*n[1] for k, v in pred_rank(p, n[0]).items()} )(prediction, c) for c in candidates)
-        ranks = [{k: v*n[1] for k, v in self.pred_rank(self.prediction, n[0]).items()} for n in candidates]
+        print(self.prediction["vwatyR"])
+        ranks = [{k: v*pow(n[1], 10) for k, v in self.pred_rank(self.prediction, n[0]).items()} for n in candidates if len(n[0]) > 0]
         flat = self.merge_with_all(lambda x, y: x+y ,ranks)
         probs = [(k, v) for k, v in flat.items()]
-        return sorted(probs, key=lambda x: x[1], reverse=True)[:10]
+        return sorted(probs, key=lambda x: x[1], reverse=True)
+    
+    def toWord(self, indices):
+        return "".join([self.lut[key] for key in indices])
 
-    def generate_suggestions(self, L, max, threshold):
+    def generate_suggestions(self, L, max):
         
         def worker(SL):
             if(len(SL) == 0):
@@ -108,30 +119,75 @@ class Prophet:
                 else: return [(c[0], c[1]*(1-p)) for c in candidates]
             
             return [(c[0], c[1]*(1-p)) for c in candidates] + [([letter] + c[0], c[1]*p) for c in candidates]
-            
 
-        sorted_letters = [i for i in sorted(enumerate(L), key=lambda x:abs(x[1][1] - threshold), reverse=True)]
+        print("L")
+        print(L)
+        sorted_letters = [i for i in sorted(enumerate(L), key=lambda x:abs(x[1][1] - 0.5), reverse=True)]
 
         candidates = worker(sorted_letters)
-
+        print("====canidates====")
+        print(candidates)
         reordered = [(sorted(c[0], key=lambda x:x[0]), c[1]) for c in candidates]
-
-        return sorted(reordered, key=lambda x:x[1], reverse=True)[:max]
-    
-    def find_threshold(self):
-        scores = sorted([c[1] for c in self.candidates])
-        if(len(scores)== 1):
-            return scores[0]
+        print("====rorerd====")
         
-        clusters = km.cluster(scores, 2)
-        idx = clusters.find(1)
-        return (scores[idx-1]+scores[idx])/2
+        print(reordered)
+        simplified = [(self.toWord([l[1][0] for l in c[0]]),c[1]) for c in reordered]
+        return sorted(simplified, key=lambda x:x[1], reverse=True)[:max]
+    
+    def scores_to_probs(self, candidates):
+        
+        def sigmoid(x, t, p):
+            return 1/(1+math.exp(-p*(x-t)))
+        
+        def lerp(a,b,x):
+            return a*x + b*(1-x)
+        
+        def coeff(x, t, p1, p2):
+            return lerp(p1, p2, sigmoid(x, t, 1))
+        
+        def ex(t, p):
+            return 2/math.fabs(p-t)
+
+        def normalize(x, t, p1, p2):
+            p3 = ex(t, p1)
+            p4 = ex(t, p2)
+            c = coeff(x, t, p3, p4)
+            return sigmoid(x, t, c)
+        
+        scores = sorted([s[1] for s in candidates])
+
+        if(len(scores)== 1):
+            return [(candidates[0][0], 1)]
+        
+        clusters, centroids = km.cluster(scores, 2)
+        idx = clusters.index(1)
+        thresh = (scores[idx-1]+scores[idx])/2
+        print("SCORES")
+        print(scores)
+        print(thresh)
+        return [(s[0], normalize(s[1], thresh, centroids[0], centroids[1])) for s in candidates]
+
 
     def get_suggestions(self):
-        threshold = self.find_threshold()
-        generated = self.generate_suggestions(self.candidates, 20, threshold)
+        if(self.candidates is None):
+            return []
+        full = [c for c in self.candidates if c is not None]
+        if(len(full) == 0):
+            return []
+        
+        for c in full:
+            print( (self.lut[c[0]], c[0], c[1] ))
+        
+        print(full)
+        normalized = self.scores_to_probs(full)
+        generated = self.generate_suggestions(normalized, 20)
+        print(generated)
+        self.queued = 0
+        preds = self.tune_prediction(generated)[:3]
+        return [p[0] for p in preds]
 
-        return self.tune_prediction(generated)
+    def getQueued(self):
+        return self.queued
 
     def extend_array(self, array, size):
         for i in range(size):
@@ -143,9 +199,6 @@ class Prophet:
         for c in data:
             if(c[1] >= cl):
                 self.candidates = self.extend_array(self.candidates, 3*(1 + c[1] - cl))
-            
-            self.candidates[c[1]] = (c[0], c[2])
-    
-    def multi_update_candidates(self, updates):
-        for u in updates:
-            self.update_candidates(u)
+            if(c[2] >= 0.0001):
+               self.candidates[c[1]] = (c[0], c[2])
+        self.queued += 1

@@ -20,7 +20,7 @@ function send(candidates) {
         });
         console.log(simplified);
         let message = {
-            type: "getSuggestions",
+            type: "candidates",
             content: simplified
         };
         server.send(JSON.stringify(message));
@@ -28,7 +28,7 @@ function send(candidates) {
 }
 function setSentence(sentence) {
     let message = {
-        type: "setSentence",
+        type: "sentence",
         content: sentence
     };
     server.send(JSON.stringify(message));

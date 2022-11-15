@@ -1,42 +1,69 @@
 from concurrent import futures
 import sys
+from threading import Lock, Thread
+import time
+import prophet as pro
+import json
+from safeprint import print
 
-import grpc
-import EremApi_pb2_grpc as api
-import EremApi_pb2 as pro
-import prophet as ai
+class ProphetProcess(Thread):
+    prophet = None
+    suggestions = []
+    lock = Lock() 
+    sentence = None
 
-suggestions = []
-def generateSuggestions():
-    print(str(suggestions))
-    return suggestions
+    def __init__(self):
+        super().__init__()
+        self.prophet = pro.Prophet()
+    
+    def postCandidates(self, candidates):
+        with self.lock:
+            print("candidate")
+            self.prophet.update_candidates(candidates)
+            return self.suggestions
+    
+    def predict(self, sentence):
+        with self.lock:
+            print("request predict")
+            self.sentence = sentence
+    
+    def run(self):
+        while True:
+            time.sleep(0.1)
+            if self.prophet.getQueued() > 0:
+                suggestions = self.prophet.get_suggestions()
+                print("got suggestions")
+            else:
+                suggestions = self.suggestions
+            with self.lock:
+                self.suggestions = suggestions
+                if(self.sentence != None):
+                    print("predict")
+                    self.prophet.predict(self.sentence)
+                    self.sentence = None
+            
+process = ProphetProcess()
 
-class Servicer(api.EremApiServicer):
-    def getSuggestions(self, request, context):
-        print("get suggestions")
-        
-        return pro.Suggestions(words=generateSuggestions(request))
+def clientHandle(msg):
+    decoded = json.loads(msg)
+    ty = decoded["type"]
+    obj = decoded["content"]
 
-    def setSentence(self, request, context):
-        sentence = str(request)
-        print("sentence: \"" + sentence + "\"")
-        prophet.predict(sentence)
+    if ty == "candidates":
+        send("suggestions", process.postCandidates(obj))
 
-        return pro.Void()
+    elif ty == "sentence":
+        process.predict(obj)
 
-port = 8765
-prophet = ai.Prophet()
-prophet.predict("")
-suggestions = []#prophet.get_suggestions()
+def send(type, message):
+    typed = {"type": type, "content": message}
+    asStr = json.dumps(typed)
+    print("<EREM.MSG>:" + asStr)
 
-server = grpc.server(futures.ThreadPoolExecutor(max_workers=1))
-api.add_EremApiServicer_to_server(Servicer(), server)
+process.start()
 
-print("START")
-print("<READY>")
-server.add_insecure_port('localhost:' + str(port))
+send("ready", None)
 
-server.start()
+for msg in sys.stdin:
+    clientHandle(msg)
 
-server.wait_for_termination()
-print("OVER")

@@ -25,7 +25,7 @@ function send(candidates: Candidate[]){
         })
         console.log(simplified);
         let message = {
-            type: "getSuggestions",
+            type: "candidates",
             content: simplified
         };
         server.send(JSON.stringify(message));
@@ -33,7 +33,7 @@ function send(candidates: Candidate[]){
 }
 function setSentence(sentence: string){
     let message = {
-        type: "setSentence",
+        type: "sentence",
         content: sentence
     }
     server.send(JSON.stringify(message));

@@ -117,7 +117,7 @@ class Cursor {
 export class CursorSettings {
     constructor() {
         this.minDiameter = 70;
-        this.maxDiameter = 300;
+        this.maxDiameter = 0;
         this.reduceVelocity = 2.5;
         this.reduceTreshold = 7;
         this.smoothReduce = 10;
@@ -183,7 +183,7 @@ export class KeyboardManager {
         this.keyHandler = keyHandler;
     }
     score(elapsed, distance) {
-        return 1000 * elapsed / (1 + distance * this.cursor.size);
+        return 10 * elapsed / (1 + distance * this.cursor.size);
     }
     updateScore(idx, timestamp, distance) {
         let elapsed = timestamp - this.lastUpdateTimestamp;
