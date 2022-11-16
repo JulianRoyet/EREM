@@ -18,29 +18,29 @@ class ProphetProcess(Thread):
     
     def postCandidates(self, candidates):
         with self.lock:
-            print("candidate")
             self.prophet.update_candidates(candidates)
-            return self.suggestions
     
     def predict(self, sentence):
         with self.lock:
-            print("request predict")
             self.sentence = sentence
+            
+    def getSuggestions(self):
+        with self.lock:
+            return self.suggestions
     
     def run(self):
         while True:
-            time.sleep(0.05)
+            time.sleep(0.01)
             if self.prophet.getQueued() > 0:
                 suggestions = self.prophet.get_suggestions()
-                print("got suggestions")
             else:
                 suggestions = self.suggestions
             with self.lock:
                 self.suggestions = suggestions
                 if(self.sentence != None):
-                    print("predict")
                     self.prophet.reset_candidates()
                     self.prophet.predict(self.sentence)
+                    self.prophet.queued+=1
                     self.sentence = None
             
 process = ProphetProcess()
@@ -51,10 +51,13 @@ def clientHandle(msg):
     obj = decoded["content"]
 
     if ty == "candidates":
-        send("suggestions", process.postCandidates(obj))
+        process.postCandidates(obj)
 
     elif ty == "sentence":
         process.predict(obj)
+    
+    elif ty == "requestSuggestions":
+        send("suggestions", process.getSuggestions())
 
 def send(type, message):
     typed = {"type": type, "content": message}

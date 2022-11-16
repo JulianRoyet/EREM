@@ -14,7 +14,7 @@ import kmeans1d as km
 from safeprint import print
 
 class Prophet:
-    damp = 10
+    aipow = 15
     prophet_predict = None
     pdict = None
     candidates = None
@@ -57,13 +57,14 @@ class Prophet:
     def predict(self, sentence):
         print("sentence: " + sentence)
         res = self.prophet_predict(sentence + "<mask>", )
-        pres = [(w["token_str"], self.pdict[w["token_str"].lower()], 1 + math.pow(w["score"], 1/self.damp)) for w in res if w["token_str"].lower() in self.pdict.keys()]
+        pres = [(w["token_str"], self.pdict[w["token_str"].lower()], w["score"]) for w in res if w["token_str"].lower() in self.pdict.keys()]
         
         pres = sorted(pres, key=lambda x: x[1])
         
-        self.prediction =  {key:   [functools.reduce(lambda a, e: (e[0].lower(), e[1], a[2] + e[2]), list(capgroup), ("","",0.0)) 
+        self.prediction =  {key:   [functools.reduce(lambda a, e: (e[0].lower(), e[1], a[2] + e[2]), list(capgroup), ("","",1.0)) 
                         for capkey, capgroup in itertools.groupby(sorted(list(group), key=lambda p: p[0].lower()), lambda p: p[0].lower()) ]
                         for key, group in itertools.groupby(pres, lambda p: p[1])}
+        #print(sorted(self.prediction.values(), key=lambda x: x[0][2], reverse=True)[:20])
 
 
     def merge_with(self, f, A, B):
@@ -96,9 +97,10 @@ class Prophet:
         return self.merge_with_all(lambda x, y: x+y ,f)
 
     def tune_prediction(self, candidates):
-        ranks = [{k: v*pow(n[1], self.damp) for k, v in self.pred_rank(self.prediction, n[0]).items()} for n in candidates if len(n[0]) > 0]
+        ranks = [{k: pow(v, self.aipow)*n[1] for k, v in self.pred_rank(self.prediction, n[0]).items()} for n in candidates if len(n[0]) > 0]
         flat = self.merge_with_all(lambda x, y: x+y ,ranks)
         probs = [(k, v) for k, v in flat.items()]
+     
         return sorted(probs, key=lambda x: x[1], reverse=True)
     
     def toWord(self, indices):
@@ -120,17 +122,11 @@ class Prophet:
             
             return [(c[0], c[1]*(1-p)) for c in candidates] + [([letter] + c[0], c[1]*p) for c in candidates]
 
-        print("L")
-        print(L)
         sorted_letters = [i for i in sorted(enumerate(L), key=lambda x:abs(x[1][1] - 0.5), reverse=True)]
 
         candidates = worker(sorted_letters)
-        print("====canidates====")
-        print(candidates)
         reordered = [(sorted(c[0], key=lambda x:x[0]), c[1]) for c in candidates]
-        print("====rorerd====")
         
-        print(reordered)
         simplified = [(self.toWord([l[1][0] for l in c[0]]),c[1]) for c in reordered]
         return sorted(simplified, key=lambda x:x[1], reverse=True)[:max]
     
@@ -162,27 +158,29 @@ class Prophet:
         clusters, centroids = km.cluster(scores, 2)
         idx = clusters.index(1)
         thresh = (scores[idx-1]+scores[idx])/2
-        print("SCORES")
-        print(scores)
-        print(thresh)
 
         return [(s[0], normalize(s[1], thresh, centroids[0], centroids[1])) for s in candidates]
 
+    def get_default_suggestions(self):
+        allp = [(t[0], pow(t[2], self.aipow)) for v in self.prediction.values() for t in v]
+        sap = sorted(allp, key=lambda x: x[1], reverse=True)
+        return [p[0] for p in sap]
 
     def get_suggestions(self):
         if(self.candidates is None):
-            return []
+            return self.get_default_suggestions()
         full = [c for c in self.candidates if c is not None]
         if(len(full) == 0):
-            return []
+            return self.get_default_suggestions()
+
+        #print("typed")
+        #for c in full:
+        #    print( (self.lut[c[0]], c[0], c[1] ))
         
-        for c in full:
-            print( (self.lut[c[0]], c[0], c[1] ))
-        
-        print(full)
         normalized = self.scores_to_probs(full)
-        generated = self.generate_suggestions(normalized, 15)
-        print(generated)
+        generated = self.generate_suggestions(normalized, 12)
+        #print("candidate words")
+        #print(generated)
         self.queued = 0
         preds = self.tune_prediction(generated)[:5]
         return [p[0] for p in preds]
