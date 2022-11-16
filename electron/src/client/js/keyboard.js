@@ -173,17 +173,11 @@ export class KeyboardManager {
             mouseX = e.pageX;
             mouseY = e.pageY;
         });
-        this.stateArray = [];
-        let len = Object.values(Key).length;
-        for (let i = 0; i < len; i++) {
-            this.stateArray.push(new KeyState());
-        }
-        this.keyPressList = [];
-        this.lastUpdateTimestamp = Date.now();
+        this.clear();
         this.keyHandler = keyHandler;
     }
     score(elapsed, distance) {
-        return 10 * elapsed / (1 + distance * this.cursor.size);
+        return elapsed / (1 + distance * this.cursor.size);
     }
     updateScore(idx, timestamp, distance) {
         let elapsed = timestamp - this.lastUpdateTimestamp;
@@ -248,5 +242,14 @@ export class KeyboardManager {
         this.lastUpdateTimestamp = timestamp;
         let data = this.candidateScores();
         this.keyHandler(data);
+    }
+    clear() {
+        this.stateArray = [];
+        let len = Object.values(Key).length;
+        for (let i = 0; i < len; i++) {
+            this.stateArray.push(new KeyState());
+        }
+        this.keyPressList = [];
+        this.lastUpdateTimestamp = Date.now();
     }
 }

@@ -29,7 +29,7 @@ class ProphetProcess(Thread):
     
     def run(self):
         while True:
-            time.sleep(0.1)
+            time.sleep(0.05)
             if self.prophet.getQueued() > 0:
                 suggestions = self.prophet.get_suggestions()
                 print("got suggestions")
@@ -39,6 +39,7 @@ class ProphetProcess(Thread):
                 self.suggestions = suggestions
                 if(self.sentence != None):
                     print("predict")
+                    self.prophet.reset_candidates()
                     self.prophet.predict(self.sentence)
                     self.sentence = None
             

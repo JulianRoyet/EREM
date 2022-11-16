@@ -14,6 +14,7 @@ import kmeans1d as km
 from safeprint import print
 
 class Prophet:
+    damp = 10
     prophet_predict = None
     pdict = None
     candidates = None
@@ -56,7 +57,7 @@ class Prophet:
     def predict(self, sentence):
         print("sentence: " + sentence)
         res = self.prophet_predict(sentence + "<mask>", )
-        pres = [(w["token_str"], self.pdict[w["token_str"].lower()], math.pow(w["score"], 1/15)) for w in res if w["token_str"].lower() in self.pdict.keys()]
+        pres = [(w["token_str"], self.pdict[w["token_str"].lower()], 1 + math.pow(w["score"], 1/self.damp)) for w in res if w["token_str"].lower() in self.pdict.keys()]
         
         pres = sorted(pres, key=lambda x: x[1])
         
@@ -81,7 +82,8 @@ class Prophet:
         m = p[:l] if l < len(p) else p
         d = edlib.align(q, m, task="distance")["editDistance"]
         lm = len(m)
-        r = (p, math.exp(-5.0*d/lm))
+        lr = lm/l
+        r = (p, math.exp(-5.0*d/lm)*lr)
         return r
 
 
@@ -94,9 +96,7 @@ class Prophet:
         return self.merge_with_all(lambda x, y: x+y ,f)
 
     def tune_prediction(self, candidates):
-        #ranks = pool(delayed( lambda p, n: {k: v*n[1] for k, v in pred_rank(p, n[0]).items()} )(prediction, c) for c in candidates)
-        print(self.prediction["vwatyR"])
-        ranks = [{k: v*pow(n[1], 10) for k, v in self.pred_rank(self.prediction, n[0]).items()} for n in candidates if len(n[0]) > 0]
+        ranks = [{k: v*pow(n[1], self.damp) for k, v in self.pred_rank(self.prediction, n[0]).items()} for n in candidates if len(n[0]) > 0]
         flat = self.merge_with_all(lambda x, y: x+y ,ranks)
         probs = [(k, v) for k, v in flat.items()]
         return sorted(probs, key=lambda x: x[1], reverse=True)
@@ -146,7 +146,7 @@ class Prophet:
             return lerp(p1, p2, sigmoid(x, t, 1))
         
         def ex(t, p):
-            return 2/math.fabs(p-t)
+            return 2/(math.fabs(p-t)+0.01)
 
         def normalize(x, t, p1, p2):
             p3 = ex(t, p1)
@@ -165,6 +165,7 @@ class Prophet:
         print("SCORES")
         print(scores)
         print(thresh)
+
         return [(s[0], normalize(s[1], thresh, centroids[0], centroids[1])) for s in candidates]
 
 
@@ -180,10 +181,10 @@ class Prophet:
         
         print(full)
         normalized = self.scores_to_probs(full)
-        generated = self.generate_suggestions(normalized, 20)
+        generated = self.generate_suggestions(normalized, 15)
         print(generated)
         self.queued = 0
-        preds = self.tune_prediction(generated)[:3]
+        preds = self.tune_prediction(generated)[:5]
         return [p[0] for p in preds]
 
     def getQueued(self):

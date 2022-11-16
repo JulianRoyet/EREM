@@ -8,6 +8,8 @@ let client;
 let spawn = require("child_process").spawn;
 
 let backend = null;
+let noServ = false;
+
 const createWindow = () => {
   const win = new BrowserWindow({
     width: 1280,
@@ -46,7 +48,7 @@ function backendHandle(message: string){
   }
 }
 
-app.whenReady().then(() => {
+function serverSetup(){
   backend = spawn("cmd.exe", ["/C", "python -u ..\\backend\\server.py"]);
   
   backend.on('spawn', () => {
@@ -70,8 +72,20 @@ app.whenReady().then(() => {
   backend.stderr.on('data', (data) =>{
     console.log(`BACKEND: ${data}`)
   });
+}
+app.whenReady().then(() => {
+  if(noServ)
+    createWindow();
+  else
+    serverSetup();
 })
 
+function forceReady(){
+  client.send(JSON.stringify({
+    type: "ready",
+    content: null
+  }));
+}
 app.on('window-all-closed', () => {
   spawn("taskkill", ["/pid", backend.pid, '/f', '/t']);
   if (process.platform !== 'darwin') app.quit()
@@ -79,15 +93,16 @@ app.on('window-all-closed', () => {
 
 wss.on('connection', function connection(ws) {
   client = ws;
-  
+  if(noServ)
+    forceReady();
   ws.on('message', function incoming(message) {
     let parsed = JSON.parse(message)
     switch (parsed.type) {
       case "candidates":
-        low_send(message)
+        if(!noServ)low_send(message)
         break;
       case "sentence":
-        low_send(message)
+        if(!noServ)low_send(message)
         break;
       default:
         console.log("unknown message type: " + parsed.type);

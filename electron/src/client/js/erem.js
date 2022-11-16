@@ -12,7 +12,6 @@ const server = new WebSocket(url);
 let manager;
 let sentence = "";
 let suggestions;
-suggestions = ["test", "les", "mots"];
 function send(candidates) {
     if (candidates.length > 0) {
         let simplified = candidates.map(c => {
@@ -26,7 +25,11 @@ function send(candidates) {
         server.send(JSON.stringify(message));
     }
 }
-function setSentence(sentence) {
+function setSentence(s) {
+    manager.clear();
+    sentence = s;
+    let textarea = document.getElementById('textarea');
+    textarea.value = sentence;
     let message = {
         type: "sentence",
         content: sentence
@@ -34,12 +37,11 @@ function setSentence(sentence) {
     server.send(JSON.stringify(message));
 }
 function selectSuggestion(idx) {
-    sentence = sentence + " " + suggestions[idx];
-    setSentence(sentence);
-}
-function displayText(msg) {
-    let textarea = document.getElementById('textarea');
-    textarea.value += msg + " ";
+    let ns = sentence;
+    if (ns.length > 0)
+        ns += " ";
+    ns += suggestions[idx];
+    setSentence(ns);
 }
 function deleteWord() {
     let textarea = document.getElementById('textarea');
@@ -53,9 +55,7 @@ function deleteWord() {
 function deleteAll() {
     let textarea = document.getElementById('textarea');
     textarea.value = "";
-}
-function reset() {
-    setSentence(sentence);
+    setSentence("");
 }
 function updateSuggestionsDisplay() {
     //TODO: mettre à jour les boutons suggestions à partir du tableau: suggestions: string[]
@@ -78,15 +78,16 @@ server.onopen = function () {
     loadingScreenOn();
 };
 function ready() {
-    setSentence(sentence);
     manager = new KeyboardManager(layout, new CursorSettings(), send);
+    setSentence(sentence);
     let buttons = document.querySelectorAll('.mot');
     let timer;
+    let delay = 800;
     buttons.forEach((button, index) => {
         button.addEventListener('mouseenter', () => {
             timer = setTimeout((e) => {
-                displayText(suggestions[index]);
-            }, 1000);
+                selectSuggestion(index);
+            }, delay);
         });
         button.addEventListener('mouseleave', () => {
             clearTimeout(timer);
@@ -96,9 +97,18 @@ function ready() {
     delete_button.addEventListener('mouseenter', () => {
         timer = setTimeout((e) => {
             deleteAll();
-        }, 1000);
+        }, delay);
     });
     delete_button.addEventListener('mouseleave', () => {
+        clearTimeout(timer);
+    });
+    let clear_button = document.querySelector('.clear');
+    clear_button.addEventListener('mouseenter', () => {
+        timer = setTimeout((e) => {
+            setSentence(sentence);
+        }, delay);
+    });
+    clear_button.addEventListener('mouseleave', () => {
         clearTimeout(timer);
     });
     loadingScreenOff();

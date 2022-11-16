@@ -71,7 +71,7 @@ body{
 }
 .mots{
     display: grid;
-    grid-template-columns:repeat(4, auto);
+    grid-template-columns:repeat(5, auto);
     grid-gap: 1vh;
     background-color:#222;
     margin: 1vh;
@@ -84,8 +84,20 @@ body{
     border: 3px;
     height: 100%;
     width: 100%;
-    background-color: #FEB;
+    background-image: linear-gradient( #FEB, #FEB);
+    background-color: #8EA;
+    background-repeat: no-repeat;
+    background-position: 50% 50%;
+    background-size: 100% 100%;
+    transition: transform .5s;
 }
+
+.mot:hover{
+    transform: scale(1.025);
+    background-size: 0% 0%;
+    transition: background-size 0.8s ease-in, transform .5s;
+}
+
 .mots button{
     border-radius: 15px;
 }
@@ -96,7 +108,38 @@ body{
     border: 3px;
     height: 100%;
     width: 100%;
-    background-color: #CA3C66;
+    background-image: linear-gradient( #CA3C66, #CA3C66);
+    background-color: #8EA;
+    background-repeat: no-repeat;
+    background-position: 50% 50%;
+    background-size: 100% 100%;
+    transition: transform .5s;
+}
+
+.delete:hover{
+    transform: scale(1.025);
+    background-size: 0% 0%;
+    transition: background-size 0.8s ease-in, transform .5s;
+}
+
+.clear{
+    align-self: center;
+    font-size: xx-large;
+    border: 3px;
+    height: 100%;
+    width: 100%;
+    background-image: linear-gradient( #d48c47, #d48c47);
+    background-color: #8EA;
+    background-repeat: no-repeat;
+    background-position: 50% 50%;
+    background-size: 100% 100%;
+    transition: transform .5s;
+}
+
+.clear:hover{
+    transform: scale(1.025);
+    background-size: 0% 0%;
+    transition: background-size 0.8s ease-in, transform .5s;
 }
 
 .k-key {

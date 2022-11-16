@@ -207,7 +207,7 @@ export class KeyboardManager{
     }
 
     score(elapsed: number, distance: number): number{
-        return 10*elapsed / (1 + distance * this.cursor.size)
+        return elapsed / (1 + distance * this.cursor.size)
     }
 
     updateScore(idx: number, timestamp: number, distance: number): void{
