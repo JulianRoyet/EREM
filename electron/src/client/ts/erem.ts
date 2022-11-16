@@ -32,6 +32,11 @@ function send(candidates: Candidate[]){
     }
 }
 function setSentence(sentence: string){
+    manager.clear();
+    
+    let textarea = document.getElementById('textarea') as HTMLInputElement;
+    textarea.value = sentence;
+
     let message = {
         type: "sentence",
         content: sentence
@@ -40,13 +45,10 @@ function setSentence(sentence: string){
 }
 
 function selectSuggestion(idx: number){
-    sentence = sentence + " " + suggestions[idx];
+    if(sentence.length > 0)
+    sentence += " ";
+    sentence += suggestions[idx];
     setSentence(sentence);
-}
-
-function displayText(msg){
-    let textarea = document.getElementById('textarea') as HTMLInputElement;
-    textarea.value+=msg+" ";
 }
 
 function deleteWord(){
@@ -62,10 +64,7 @@ function deleteWord(){
 function deleteAll(){
     let textarea = document.getElementById('textarea') as HTMLInputElement;
     textarea.value = "";
-}
-
-function reset(){
-    setSentence(sentence); 
+    setSentence("");    
 }
 
 function updateSuggestionsDisplay(){
@@ -73,7 +72,7 @@ function updateSuggestionsDisplay(){
     let buttons = document.querySelectorAll('.mot');
     buttons.forEach((button, index) => {
         button.innerHTML = suggestions[index];
-        })
+    })
 }
 
 
@@ -101,7 +100,7 @@ function ready() {
     buttons.forEach((button, index) => {
         button.addEventListener('mouseenter', () => {
             timer = setTimeout((e:Event) => {
-            displayText(suggestions[index]);
+            selectSuggestion(index);
         }, 1000);
         })
         button.addEventListener('mouseleave', () => {

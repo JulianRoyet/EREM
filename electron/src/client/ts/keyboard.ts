@@ -202,13 +202,7 @@ export class KeyboardManager{
             mouseY = e.pageY;
         });
         
-        this.stateArray = [];
-        let len = Object.values(Key).length;
-        for(let i=0; i < len; i++){
-            this.stateArray.push(new KeyState());
-        }
-        this.keyPressList = [];
-        this.lastUpdateTimestamp = Date.now();
+        this.clear();
         this.keyHandler = keyHandler;
     }
 
@@ -288,6 +282,16 @@ export class KeyboardManager{
         let data = this.candidateScores();
         
         this.keyHandler(data);
+    }
+
+    clear(){
+        this.stateArray = [];
+        let len = Object.values(Key).length;
+        for(let i=0; i < len; i++){
+            this.stateArray.push(new KeyState());
+        }
+        this.keyPressList = [];
+        this.lastUpdateTimestamp = Date.now();
     }
 }
 
