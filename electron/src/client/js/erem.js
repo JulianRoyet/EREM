@@ -82,11 +82,12 @@ function ready() {
     manager = new KeyboardManager(layout, new CursorSettings(), send);
     let buttons = document.querySelectorAll('.mot');
     let timer;
+    let delay = 800;
     buttons.forEach((button, index) => {
         button.addEventListener('mouseenter', () => {
             timer = setTimeout((e) => {
                 displayText(suggestions[index]);
-            }, 1000);
+            }, delay);
         });
         button.addEventListener('mouseleave', () => {
             clearTimeout(timer);
@@ -96,9 +97,18 @@ function ready() {
     delete_button.addEventListener('mouseenter', () => {
         timer = setTimeout((e) => {
             deleteAll();
-        }, 1000);
+        }, delay);
     });
     delete_button.addEventListener('mouseleave', () => {
+        clearTimeout(timer);
+    });
+    let clear_button = document.querySelector('.delete');
+    clear_button.addEventListener('mouseenter', () => {
+        timer = setTimeout((e) => {
+            // function clear to call here
+        }, delay);
+    });
+    clear_button.addEventListener('mouseleave', () => {
         clearTimeout(timer);
     });
     loadingScreenOff();

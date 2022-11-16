@@ -41,23 +41,30 @@ function backendHandle(message) {
     }
 }
 app.whenReady().then(function () {
-    backend = spawn("cmd.exe", ["/C", "python -u ..\\backend\\server.py"]);
-    backend.on('spawn', function () {
-        createWindow();
-    });
+    createWindow();
+    /*backend = spawn("cmd.exe", ["/C", "python -u ..\\backend\\server.py"]);
+    
+    backend.on('spawn', () => {
+      createWindow()
+      
+    })
+  
     backend.stdin.setEncoding('utf-8');
-    backend.stdout.on('data', function (data) {
-        var lines = "".concat(data).split("\n");
-        lines.forEach(function (line) {
-            if (line.startsWith("<EREM.MSG>:"))
-                backendHandle(line.substring(11));
-            else
-                console.log("BACKEND:" + line);
-        });
+    
+    backend.stdout.on('data', (data) =>{
+      let lines = `${data}`.split("\n");
+      lines.forEach(line => {
+        if(line.startsWith("<EREM.MSG>:"))
+          backendHandle(line.substring(11));
+        else
+          console.log("BACKEND:" + line)
+      });
+      
     });
-    backend.stderr.on('data', function (data) {
-        console.log("BACKEND: ".concat(data));
-    });
+  
+    backend.stderr.on('data', (data) =>{
+      console.log(`BACKEND: ${data}`)
+    });*/
 });
 app.on('window-all-closed', function () {
     spawn("taskkill", ["/pid", backend.pid, '/f', '/t']);
@@ -66,14 +73,18 @@ app.on('window-all-closed', function () {
 });
 wss.on('connection', function connection(ws) {
     client = ws;
+    client.send(JSON.stringify({
+        type: "ready",
+        content: null
+    }));
     ws.on('message', function incoming(message) {
         var parsed = JSON.parse(message);
         switch (parsed.type) {
             case "candidates":
-                low_send(message);
+                //low_send(message)
                 break;
             case "sentence":
-                low_send(message);
+                //low_send(message)
                 break;
             default:
                 console.log("unknown message type: " + parsed.type);

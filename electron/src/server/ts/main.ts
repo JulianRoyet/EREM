@@ -47,7 +47,8 @@ function backendHandle(message: string){
 }
 
 app.whenReady().then(() => {
-  backend = spawn("cmd.exe", ["/C", "python -u ..\\backend\\server.py"]);
+  createWindow();
+  /*backend = spawn("cmd.exe", ["/C", "python -u ..\\backend\\server.py"]);
   
   backend.on('spawn', () => {
     createWindow()
@@ -69,7 +70,7 @@ app.whenReady().then(() => {
 
   backend.stderr.on('data', (data) =>{
     console.log(`BACKEND: ${data}`)
-  });
+  });*/
 })
 
 app.on('window-all-closed', () => {
@@ -79,15 +80,18 @@ app.on('window-all-closed', () => {
 
 wss.on('connection', function connection(ws) {
   client = ws;
-  
+  client.send(JSON.stringify({
+    type:"ready",
+    content:null
+  }));
   ws.on('message', function incoming(message) {
     let parsed = JSON.parse(message)
     switch (parsed.type) {
       case "candidates":
-        low_send(message)
+        //low_send(message)
         break;
       case "sentence":
-        low_send(message)
+        //low_send(message)
         break;
       default:
         console.log("unknown message type: " + parsed.type);
