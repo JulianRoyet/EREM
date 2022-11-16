@@ -50,14 +50,15 @@ function serverSetup() {
     backend.stdout.on('data', function (data) {
         var lines = "".concat(data).split("\n");
         lines.forEach(function (line) {
+            line = line.trim();
             if (line.startsWith("<EREM.MSG>:"))
                 backendHandle(line.substring(11));
-            else
+            else if (line.length > 0)
                 console.log("BACKEND:" + line);
         });
     });
     backend.stderr.on('data', function (data) {
-        console.log("BACKEND: ".concat(data));
+        console.log("BACKEND ERROR: ".concat(data));
     });
 }
 app.whenReady().then(function () {
@@ -89,6 +90,10 @@ wss.on('connection', function connection(ws) {
                     low_send(message);
                 break;
             case "sentence":
+                if (!noServ)
+                    low_send(message);
+                break;
+            case "requestSuggestions":
                 if (!noServ)
                     low_send(message);
                 break;

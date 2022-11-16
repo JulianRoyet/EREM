@@ -16,7 +16,6 @@ let manager: KeyboardManager;
 let sentence = "";
 let suggestions: string[]
 
-
 function send(candidates: Candidate[]){
     if(candidates.length > 0){
         let simplified = candidates.map(c => {
@@ -29,6 +28,7 @@ function send(candidates: Candidate[]){
         };
         server.send(JSON.stringify(message));
     }
+    requestSuggestions();
 }
 function setSentence(s: string){
     manager.clear();
@@ -52,13 +52,9 @@ function selectSuggestion(idx: number){
 }
 
 function deleteWord(){
-    let textarea = document.getElementById('textarea') as HTMLInputElement;
-    let contenu = textarea.value;
-    let tab = contenu.split(" ");
-    textarea.value = "";
-    for(let i = 0; i < tab.length-2; i++){
-        textarea.value += tab[i]+" ";
-    }
+    let idx = sentence.lastIndexOf(" ");
+    let ns = sentence.substring(0, idx);
+    setSentence(ns);
 }
 
 function deleteAll(){
@@ -88,6 +84,14 @@ function loadingScreenOff() {
     document.getElementById('main').hidden = false;
 }
 
+function requestSuggestions(){
+    let message = {
+        type: "requestSuggestions",
+        content: null
+    };
+    server.send(JSON.stringify(message));
+}
+
 server.onopen = function(){
     loadingScreenOn();
 }
@@ -97,7 +101,7 @@ function ready() {
     setSentence(sentence);
     let buttons = document.querySelectorAll('.mot');
     let timer;
-    let delay=800;
+    let delay=600;
     buttons.forEach((button, index) => {
         button.addEventListener('mouseenter', () => {
             timer = setTimeout((e:Event) => {
@@ -126,6 +130,16 @@ function ready() {
         }, delay);
     });
     clear_button.addEventListener('mouseleave', () => {
+        clearTimeout(timer);
+    })
+
+    let remove_button = document.querySelector('.remove');
+    remove_button.addEventListener('mouseenter', () => {
+        timer = setTimeout((e:Event) => {
+        deleteWord();
+        }, delay);
+    });
+    remove_button.addEventListener('mouseleave', () => {
         clearTimeout(timer);
     })
 

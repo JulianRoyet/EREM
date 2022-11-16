@@ -61,16 +61,17 @@ function serverSetup(){
   backend.stdout.on('data', (data) =>{
     let lines = `${data}`.split("\n");
     lines.forEach(line => {
+      line = line.trim()
       if(line.startsWith("<EREM.MSG>:"))
         backendHandle(line.substring(11));
-      else
+      else if(line.length > 0)
         console.log("BACKEND:" + line)  
     });
     
   });
 
   backend.stderr.on('data', (data) =>{
-    console.log(`BACKEND: ${data}`)
+    console.log(`BACKEND ERROR: ${data}`)
   });
 }
 app.whenReady().then(() => {
@@ -102,6 +103,9 @@ wss.on('connection', function connection(ws) {
         if(!noServ)low_send(message)
         break;
       case "sentence":
+        if(!noServ)low_send(message)
+        break;
+      case "requestSuggestions":
         if(!noServ)low_send(message)
         break;
       default:

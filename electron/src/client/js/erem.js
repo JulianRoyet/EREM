@@ -24,6 +24,7 @@ function send(candidates) {
         };
         server.send(JSON.stringify(message));
     }
+    requestSuggestions();
 }
 function setSentence(s) {
     manager.clear();
@@ -44,13 +45,9 @@ function selectSuggestion(idx) {
     setSentence(ns);
 }
 function deleteWord() {
-    let textarea = document.getElementById('textarea');
-    let contenu = textarea.value;
-    let tab = contenu.split(" ");
-    textarea.value = "";
-    for (let i = 0; i < tab.length - 2; i++) {
-        textarea.value += tab[i] + " ";
-    }
+    let idx = sentence.lastIndexOf(" ");
+    let ns = sentence.substring(0, idx);
+    setSentence(ns);
 }
 function deleteAll() {
     let textarea = document.getElementById('textarea');
@@ -74,6 +71,13 @@ function loadingScreenOff() {
     document.getElementById('loading').hidden = true;
     document.getElementById('main').hidden = false;
 }
+function requestSuggestions() {
+    let message = {
+        type: "requestSuggestions",
+        content: null
+    };
+    server.send(JSON.stringify(message));
+}
 server.onopen = function () {
     loadingScreenOn();
 };
@@ -82,7 +86,7 @@ function ready() {
     setSentence(sentence);
     let buttons = document.querySelectorAll('.mot');
     let timer;
-    let delay = 800;
+    let delay = 600;
     buttons.forEach((button, index) => {
         button.addEventListener('mouseenter', () => {
             timer = setTimeout((e) => {
@@ -109,6 +113,15 @@ function ready() {
         }, delay);
     });
     clear_button.addEventListener('mouseleave', () => {
+        clearTimeout(timer);
+    });
+    let remove_button = document.querySelector('.remove');
+    remove_button.addEventListener('mouseenter', () => {
+        timer = setTimeout((e) => {
+            deleteWord();
+        }, delay);
+    });
+    remove_button.addEventListener('mouseleave', () => {
         clearTimeout(timer);
     });
     loadingScreenOff();
