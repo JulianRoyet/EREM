@@ -70,9 +70,9 @@ body{
     vertical-align:middle;
 }
 .mots{
-    display: grid;
-    grid-template-columns:repeat(5, auto);
-    grid-gap: 1vh;
+    display: flex;
+    flex-direction: row;
+    margin: 5px;
     background-color:#222;
     margin: 1vh;
     height: 12vh;
@@ -82,8 +82,12 @@ body{
     align-self: center;
     font-size: xx-large;
     border: 3px;
-    height: 100%;
-    width: 100%;
+    flex: 1 1 0;
+    margin: 10px;
+    width: 0;
+    justify-content: space-around;
+    height: 75px;
+    text-align: center;
     background-image: linear-gradient( #FEB, #FEB);
     background-color: #8EA;
     background-repeat: no-repeat;
@@ -102,13 +106,20 @@ body{
     border-radius: 15px;
 }
 
-.delete{
-    align-self: center;
-    font-size: xx-large;
-    border: 3px;
-    height: 100%;
-    width: 100%;
-    background-image: linear-gradient( #CA3C66, #CA3C66);
+.tools {
+    display: flex;
+    flex-direction: row;
+    margin: 5px;
+    background-color:#222;
+    margin: 1vh;
+    height: 12vh;
+}
+
+.tools button {
+    flex: 1 1 0;
+    margin: 10px;
+    width: 0;
+    border-radius: 15px;
     background-color: #8EA;
     background-repeat: no-repeat;
     background-position: 50% 50%;
@@ -116,10 +127,19 @@ body{
     transition: transform .5s;
 }
 
-.delete:hover{
+.tools button:hover{
     transform: scale(1.025);
     background-size: 0% 0%;
     transition: background-size 0.8s ease-in, transform .5s;
+}
+
+.delete{
+    align-self: center;
+    font-size: xx-large;
+    border: 3px;
+    height: 100%;
+    width: 100%;
+    background-image: linear-gradient( #CA3C66, #CA3C66);
 }
 
 .clear{
@@ -129,17 +149,15 @@ body{
     height: 100%;
     width: 100%;
     background-image: linear-gradient( #d48c47, #d48c47);
-    background-color: #8EA;
-    background-repeat: no-repeat;
-    background-position: 50% 50%;
-    background-size: 100% 100%;
-    transition: transform .5s;
 }
 
-.clear:hover{
-    transform: scale(1.025);
-    background-size: 0% 0%;
-    transition: background-size 0.8s ease-in, transform .5s;
+.remove{
+    align-self: center;
+    font-size: xx-large;
+    border: 3px;
+    height: 100%;
+    width: 100%;
+    background-image: linear-gradient( #CA3C66, #CA3C66);
 }
 
 .k-key {
@@ -159,6 +177,7 @@ body{
 .k-keyboard{
     cursor: none;
 }
+
 #pointer{
     position: absolute;
     width: 40px;

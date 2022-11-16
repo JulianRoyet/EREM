@@ -16,7 +16,7 @@ let manager: KeyboardManager;
 let sentence = "";
 let suggestions: string[]
 
-suggestions = ["test", "les", "mots"];
+suggestions = ["dklqsjdsqlkdjsqlkd", "les", "mots", "mots", "slkdjsqkdsdhdskfjhdfkjh"];
 
 function send(candidates: Candidate[]){
     if(candidates.length > 0){
@@ -98,7 +98,7 @@ function ready() {
     manager = new KeyboardManager(layout, new CursorSettings(), send);
     let buttons = document.querySelectorAll('.mot');
     let timer;
-    let delay=800;
+    let delay=600;
     buttons.forEach((button, index) => {
         button.addEventListener('mouseenter', () => {
             timer = setTimeout((e:Event) => {
@@ -127,6 +127,16 @@ function ready() {
         }, delay);
     });
     clear_button.addEventListener('mouseleave', () => {
+        clearTimeout(timer);
+    })
+
+    let remove_button = document.querySelector('.remove');
+    remove_button.addEventListener('mouseenter', () => {
+        timer = setTimeout((e:Event) => {
+        deleteWord();
+        }, delay);
+    });
+    remove_button.addEventListener('mouseleave', () => {
         clearTimeout(timer);
     })
 

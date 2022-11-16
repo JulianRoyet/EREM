@@ -12,7 +12,7 @@ const server = new WebSocket(url);
 let manager;
 let sentence = "";
 let suggestions;
-suggestions = ["test", "les", "mots"];
+suggestions = ["dklqsjdsqlkdjsqlkd", "les", "mots", "mots", "slkdjsqkdsdhdskfjhdfkjh"];
 function send(candidates) {
     if (candidates.length > 0) {
         let simplified = candidates.map(c => {
@@ -82,7 +82,7 @@ function ready() {
     manager = new KeyboardManager(layout, new CursorSettings(), send);
     let buttons = document.querySelectorAll('.mot');
     let timer;
-    let delay = 800;
+    let delay = 600;
     buttons.forEach((button, index) => {
         button.addEventListener('mouseenter', () => {
             timer = setTimeout((e) => {
@@ -109,6 +109,15 @@ function ready() {
         }, delay);
     });
     clear_button.addEventListener('mouseleave', () => {
+        clearTimeout(timer);
+    });
+    let remove_button = document.querySelector('.remove');
+    remove_button.addEventListener('mouseenter', () => {
+        timer = setTimeout((e) => {
+            deleteWord();
+        }, delay);
+    });
+    remove_button.addEventListener('mouseleave', () => {
         clearTimeout(timer);
     });
     loadingScreenOff();
